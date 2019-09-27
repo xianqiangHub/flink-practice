@@ -9,8 +9,9 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>hotItems</module>
-        <module>realTimeETL</module>
+        <module>hot-items</module>
+        <module>real-time-ETL</module>
+        <module>connect-hive</module>
     </modules>
 
     <properties>
