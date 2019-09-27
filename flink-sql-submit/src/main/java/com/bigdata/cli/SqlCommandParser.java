@@ -74,6 +74,7 @@ public final class SqlCommandParser {
 					groups[i] = matcher.group(i + 1);
 				}
 				return cmd.operandConverter.apply(groups)
+						//在这块封装
 					.map((operands) -> new SqlCommandCall(cmd, operands));
 			}
 		}

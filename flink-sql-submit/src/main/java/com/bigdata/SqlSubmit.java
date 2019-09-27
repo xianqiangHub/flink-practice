@@ -15,9 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.bigdata;
-
 import com.bigdata.cli.CliOptions;
 import com.bigdata.cli.CliOptionsParser;
 import com.bigdata.cli.SqlCommandParser;
@@ -30,9 +28,24 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ *如何使用 Blink Planner
+ 一个简单的 SqlSubmit 是如何实现的
+ 如何用 DDL 创建一个 Kafka 源表和 MySQL 结果表
+ 运行一个从 Kafka 读取数据，计算 PVUV，并写入 MySQL 的作业
+ 设置调优参数，观察对作业的影响
+ */
+
+/**
+ * 需求是计算每小时全网的用户访问量，和独立用户数。很多用户可能会想到使用滚动窗口来计算。
+ * 但这里我们介绍另一种方式。即 Group Aggregation 的方式。
+ *
+ * 这种方式的执行模式是每收到一条数据，然后将最新结果输出。所以实时性很高，但输出量也大。
+ */
+
 public class SqlSubmit {
 
-    //  CREATE_TABLE:  INSERT_INTO:
+    //  CREATE_TABLE:  INSERT_INTO:   SET:
     public static void main(String[] args) throws Exception {
         final CliOptions options = CliOptionsParser.parseClient(args);
         SqlSubmit submit = new SqlSubmit(options);
@@ -53,10 +66,11 @@ public class SqlSubmit {
     private void run() throws Exception {
         EnvironmentSettings settings = EnvironmentSettings.newInstance()
                 .useBlinkPlanner()
-                .inStreamingMode()
+                .inStreamingMode()      //思考流式的sql
                 .build();
         this.tEnv = TableEnvironment.create(settings);
         List<String> sql = Files.readAllLines(Paths.get(workSpace + "/" + sqlFilePath));
+        //都进来的sql封装SqlCommandCall，，多个list 解析核心
         List<SqlCommandCall> calls = SqlCommandParser.parse(sql);
         for (SqlCommandCall call : calls) {
             callCommand(call);
