@@ -53,7 +53,7 @@ public class KafakToHdfs {
         public String getBucketId(String element, Context context) {
 //            JsonNode node = mapper.readTree(element);
 //            long date = (long) (node.path("timestamp").floatValue() * 1000);
-            long date = 1L;
+            long date = 1L; //json解析，从数据中获取timestamp
             String partitionValue = new SimpleDateFormat("yyyyMMdd").format(new Date(date));
             return "dt=" + partitionValue;
         }
