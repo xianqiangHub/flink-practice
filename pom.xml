@@ -13,6 +13,7 @@
         <module>real-time-ETL</module>
         <module>connect-hive</module>
         <module>flink-sql-submit</module>
+        <module>real-pvuv</module>
     </modules>
 
     <properties>

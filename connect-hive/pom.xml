@@ -11,5 +11,9 @@
 
     <artifactId>connect-hive</artifactId>
 
+    <dependencies>
+
+    </dependencies>
+
 
 </project>

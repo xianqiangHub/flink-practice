@@ -1,13 +1,14 @@
--- -- 开启 mini-batch
+-- -- 开启 mini-batch   状态存储的优化
 -- SET table.exec.mini-batch.enabled=true;
 -- -- mini-batch的时间间隔，即作业需要额外忍受的延迟
 -- SET table.exec.mini-batch.allow-latency=1s;
 -- -- 一个 mini-batch 中允许最多缓存的数据
 -- SET table.exec.mini-batch.size=1000;
--- -- 开启 local-global 优化
+
+-- -- 开启 local-global 优化   多分区的数据倾斜 预聚合
 -- SET table.optimizer.agg-phase-strategy=TWO_PHASE;
 --
--- -- 开启 distinct agg 切分
+-- -- 开启 distinct agg 切分  最后只能一个处理的切分成多块处理
 -- SET table.optimizer.distinct-agg.split.enabled=true;
 
 
