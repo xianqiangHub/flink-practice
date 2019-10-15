@@ -14,6 +14,7 @@
         <module>connect-hive</module>
         <module>flink-sql-submit</module>
         <module>real-pvuv</module>
+        <module>flink-table</module>
     </modules>
 
     <properties>
@@ -43,6 +44,14 @@
                 <artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
                 <version>${flink.version}</version>
             </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-table -->
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-table</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>

@@ -13,11 +13,14 @@ import org.apache.flink.api.java.typeutils.PojoTypeInfo;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.Path;
+import org.apache.flink.runtime.state.filesystem.FsStateBackend;
+import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
+import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
@@ -59,6 +62,14 @@ public class MyHotItems {
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
         // 为了打印到控制台的结果不乱序，我们配置全局的并发为1，改变并发对结果正确性没有影响
         env.setParallelism(1);
+        env.enableCheckpointing(3000, CheckpointingMode.AT_LEAST_ONCE);
+        env.setStateBackend(new FsStateBackend("file:///D:/Code/github/flinkState"));
+
+        //状态存储策略  默认使用MemoryStateBackend
+//        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:9000/flink/check"));
+//        env.setStateBackend(new RocksDBStateBackend("hdfs:///mycluster/tmp/"));
+//        env.setStateBackend(new RocksDBStateBackend(params.get("checkpointdir")));
+
 //        env.getConfig().setAutoWatermarkInterval(300000);
 
 //        // UserBehavior.csv 的本地文件路径, 在 resources 目录下
@@ -106,20 +117,30 @@ public class MyHotItems {
                     }
                 })
                 .keyBy("itemId")
-                .timeWindow(Time.minutes(60))
+                .timeWindow(Time.minutes(5))
                 //用到trigger，当窗口比较大，中间要触发执行
                 //第5秒的数据是包括在触发中的
-                .trigger(ContinuousEventTimeTrigger.of(Time.seconds(5)))
+//                .trigger(ContinuousEventTimeTrigger.of(Time.seconds(5)))
                 //驱逐元素，要保证在下面aggregate保存了中间状态
                 //每次trriger保存下中间状态，驱逐已经计算的元素
                 //evictBefore()：移除窗口元素，在Window Function之前调用。
-               //evictAfter()：移除窗口元素，在Window Function之后调用。
+                //evictAfter()：移除窗口元素，在Window Function之后调用。
 //                .evictor(TimeEvictor.of(Time.seconds(0),true))//计算完丢掉
                 //这个是每次触发计算只计算  最近的时间的数据
                 //注意的是  watermark触发，为最后一条数据的时间戳去减 这个5秒
-                .evictor(TimeEvictor.of(Time.seconds(5)))//计算前丢掉 默认 false
-                .aggregate(new CountAgg(),new MyWindowResultFunction())
+//                .evictor(TimeEvictor.of(Time.seconds(5)))//计算前丢掉 默认 false
+//                .apply(new WindowFunction<UserBehavior, Object, Tuple, TimeWindow>() {
+//                    @Override
+//                    public void apply(Tuple tuple, TimeWindow window, Iterable<UserBehavior> input, Collector<Object> out) throws Exception {
+//
+//                    }
+//                })
+                .aggregate(new CountAgg(), new MyWindowResultFunction())
+//                .print();
+                .keyBy(0)
+                .process(new MyKeyedProcessedFunction())
                 .print();
+
 
 //                .aggregate(new CountAgg(), new WindowResultFunction()) //aggregate 相对于apply，会做预聚合 增量聚合， WindowResultFunction作用于窗口的函数，决定怎么输出，触发窗口发出元素，到这个函数中
 //                .keyBy("windowEnd")
@@ -127,6 +148,50 @@ public class MyHotItems {
 //                .print();
 
         env.execute("Hot Items Job");
+    }
+
+    public static class MyKeyedProcessedFunction extends KeyedProcessFunction<Tuple, Tuple2<Long, Long>, String> {
+
+        private ListState<String> listState;
+
+        //在open获取状态，ked状态
+        @Override
+        public void open(Configuration parameters) throws Exception {
+
+            ListStateDescriptor<String> stringListStateDescriptor = new ListStateDescriptor<>("first-state", String.class);
+
+            listState = getRuntimeContext().getListState(stringListStateDescriptor);
+        }
+
+        @Override
+        public void processElement(Tuple2<Long, Long> input, Context ctx, Collector<String> out) throws Exception {
+            String key = String.valueOf(input.f0);
+            Long value = input.f1;
+
+//            out.collect(String.valueOf(key) + ":" + String.valueOf(value));
+            //我手动输入，超过200ms，当前元素过来的是上个元素生成的watermark
+//            System.out.println(ctx.timerService().currentWatermark());
+            //这个watermark在后台触发，触发的地方？
+//            ctx.timerService().registerEventTimeTimer(1511658600000L);
+            Iterable<String> oldKeys = listState.get();
+            ArrayList<String> list = new ArrayList<>();
+            System.out.println("oldKeys" + oldKeys);
+            for (String oldKey : oldKeys) {
+              list.add(oldKey);
+            }
+            if (list.isEmpty() || !list.contains(key)){
+                out.collect(key + ":" + String.valueOf(value));
+                System.out.println("zoula ");
+            }
+
+            listState.add(String.valueOf(key));
+        }
+
+        @Override
+        public void onTimer(long timestamp, OnTimerContext ctx, Collector<String> out) throws Exception {
+
+//            out.collect(String.valueOf(key) + ":" + listState.get().toString());
+        }
     }
 
     /**
@@ -253,7 +318,7 @@ public class MyHotItems {
 
             Long Mykey = ((Tuple1<Long>) key).f0;
             Long next = input.iterator().next();
-            out.collect(new Tuple2(Mykey,next));
+            out.collect(new Tuple2(Mykey, next));
         }
     }
 

@@ -13,11 +13,13 @@ public class TimeUtils {
         System.out.println(data);//1511658300000
 
         String data2 = dateToStamp("2017-11-26 09:10:00");
-        System.out.println(data2);//1511658300000
+        System.out.println(data2);//1511658600000
 
         String data1 = dateToStamp("2017-11-26 10:00:00");
         System.out.println(data1);//1511661600000
 
+        String time3 = stampToDate("1511658317000");
+        System.out.println(time3);
     }
 
     /*
