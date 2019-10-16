@@ -12,7 +12,7 @@ import org.apache.flink.table.api.java.StreamTableEnvironment;
 
 import java.util.Properties;
 
-public class TableAPI {
+public class MyTableAPI {
     /**
      * flink1.8有7个tablenvironment，
      * 到1.9有5个：TableEnvironment，StreamTableEnvironment（java,scala），BatchTableEnvironment （java,scala）
