@@ -14,7 +14,7 @@
         <module>connect-hive</module>
         <module>flink-sql-submit</module>
         <module>real-pvuv</module>
-        <module>flink-table</module>
+        <module>real-flink-table</module>
         <module>async-IO</module>
     </modules>
 
