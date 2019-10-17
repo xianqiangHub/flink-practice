@@ -1,15 +1,18 @@
 package com.bigdata;
 
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
-import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.java.BatchTableEnvironment;
+import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.types.Row;
 
+import java.sql.Timestamp;
 import java.util.Properties;
 
 public class MyTableAPI {
@@ -39,7 +42,7 @@ public class MyTableAPI {
      * 目前 Table API & SQL 是无法设置并行度的，这使得 Table API 看起来仍像个玩具。
      */
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         // 场景一 flink old planner Streaming query
 //        EnvironmentSettings fsSettings = EnvironmentSettings.newInstance().useOldPlanner().inStreamingMode().build();
@@ -68,10 +71,55 @@ public class MyTableAPI {
         FlinkKafkaConsumer<String> fc = new FlinkKafkaConsumer<>("hotitem", new SimpleStringSchema(), prop);
         fc.setStartFromLatest();
         DataStreamSource<String> source = bsEnv.addSource(fc);
+        SingleOutputStreamOperator<ClickLog> mapSource = source.map(new MapFunction<String, ClickLog>() {
 
-        bsTableEnv.fromDataStream(source);
+            @Override
+            public ClickLog map(String input) throws Exception {
+                String[] split = input.split(",");
+
+                return new ClickLog(split[0], Timestamp.valueOf(split[1]), split[2]);
+            }
+        });
+//        mapSource.print();
+
+//        Table table = bsTableEnv.fromDataStream(mapSource, "kafka");//不能放数据源需要operator
+
+//        Table kafka = table.select("kafka");
+//        bsTableEnv.toRetractStream(kafka, Row.class).print();  Row ??
+//bsTableEnv.toAppendStream(kafka);
+
+        bsTableEnv.registerDataStream("click_table", mapSource);
+
+        //Timestamp从MySQL数据库取出的字符串转换为LocalDateTime
+        Table table = bsTableEnv.sqlQuery("select user,count(url) as cnt from click_table group by user");
+
+//        table.printSchema();
+//               root
+//                |-- cTime: TIMESTAMP(3)
+//                |-- url: STRING
+//                |-- user: STRING
+
+//        bsTableEnv.toRetractStream(table, ClickLog.class).map(new MapFunction<Tuple2<Boolean, ClickLog>, String>() {
+//            @Override
+//            public String map(Tuple2<Boolean, ClickLog> input) throws Exception {
+////                System.out.println(input.f0);
+//
+//                return input.f1.toString();
+//            }
+//        }).print();
+
+        //流式sql的更新，不是说sql的更新操作，是SQL的计算，结果表的变化，会删除旧数据插入新数据，标识true和false
+        //如果sink为可修改的数据库或者connect，实现更新
+        //比如count 再来一条会3> (false,jack,3)     3> (true,jack,4)
+        bsTableEnv.toRetractStream(table, Row.class).print();
 
 
-
+        /**
+         *  //表转化为流 toAppendStream   toRetractStream
+         *追加模式：动态Table仅通过INSERT更改修改时才能使用此模式，如果更新或删除操作使用追加模式会失败报错
+         *缩进模式：始终可以使用此模式。返回值是boolean类型。它用true或false来标记数据的插入和撤回，
+         *    返回true代表数据插入，false代表数据的撤回可以适用于更新，删除等场景
+         */
+        bsEnv.execute("kafkaTable"); //没有流不会阻塞
     }
 }

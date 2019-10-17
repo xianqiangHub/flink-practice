@@ -35,15 +35,13 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-api-java-bridge_2.11</artifactId>
             <version>1.9.0</version>
-            <scope>provided</scope>
         </dependency>
         <!-- or... -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-api-scala-bridge_2.11</artifactId>
-            <version>1.9.0</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.apache.flink</groupId>-->
+        <!--<artifactId>flink-table-api-scala-bridge_2.11</artifactId>-->
+        <!--<version>1.9.0</version>-->
+        <!--</dependency>-->
 
         <!-- Either... (for the old planner that was available before Flink 1.9) -->
         <dependency>
@@ -67,6 +65,19 @@
             <version>1.9.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.7</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
 
