@@ -3,16 +3,21 @@ package com.bigdata;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.streaming.api.collector.selector.OutputSelector;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
+import org.apache.flink.streaming.util.serialization.KeyedDeserializationSchema;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
 import org.apache.flink.types.Row;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class MyTableAPI {
@@ -68,7 +73,8 @@ public class MyTableAPI {
 
         Properties prop = new Properties();
         prop.setProperty("bootstrap.servers", "hadoop102:9092,hadoop103:9092,hadoop104:9092");
-        FlinkKafkaConsumer<String> fc = new FlinkKafkaConsumer<>("hotitem", new SimpleStringSchema(), prop);
+        FlinkKafkaConsumer<String> fc = new FlinkKafkaConsumer<>("jaa,hotitem", new SimpleStringSchema(), prop);
+//        new FlinkKafkaConsumer<>("jaa,hotitem", new KeyedDeserializationSchema(), prop);
         fc.setStartFromLatest();
         DataStreamSource<String> source = bsEnv.addSource(fc);
         SingleOutputStreamOperator<ClickLog> mapSource = source.map(new MapFunction<String, ClickLog>() {
@@ -80,6 +86,32 @@ public class MyTableAPI {
                 return new ClickLog(split[0], Timestamp.valueOf(split[1]), split[2]);
             }
         });
+        //split select print  可以切成两个流打印，独立操作不干扰
+        DataStream<ClickLog> select1 = mapSource.split(new OutputSelector<ClickLog>() {
+            @Override
+            public Iterable<String> select(ClickLog value) {
+                List<String> output = new ArrayList<String>();
+                if (value.getUser().startsWith("j")) {
+                    output.add("jia");
+                } else {
+                    output.add("jack");
+                }
+                return output;
+            }
+        }).select("jia");
+        DataStream<ClickLog> select2 = mapSource.split(new OutputSelector<ClickLog>() {
+            @Override
+            public Iterable<String> select(ClickLog value) {
+                List<String> output = new ArrayList<String>();
+                if (value.getUser().startsWith("j")) {
+                    output.add("jia");
+                } else {
+                    output.add("ack");
+                }
+                return output;
+            }
+        }).select("ack");
+
 //        mapSource.print();
 
 //        Table table = bsTableEnv.fromDataStream(mapSource, "kafka");//不能放数据源需要operator
@@ -88,10 +120,12 @@ public class MyTableAPI {
 //        bsTableEnv.toRetractStream(kafka, Row.class).print();  Row ??
 //bsTableEnv.toAppendStream(kafka);
 
-        bsTableEnv.registerDataStream("click_table", mapSource);
+        bsTableEnv.registerDataStream("click_table1", select1);
+        bsTableEnv.registerDataStream("click_table2", select2);
 
         //Timestamp从MySQL数据库取出的字符串转换为LocalDateTime
-        Table table = bsTableEnv.sqlQuery("select user,count(url) as cnt from click_table group by user");
+//        Table table = bsTableEnv.sqlQuery("select user,count(url) as cnt from click_table group by user");
+        Table table = bsTableEnv.sqlQuery("select * from click_table1 as a join click_table2 as b on a.url = b.url");
 
 //        table.printSchema();
 //               root
