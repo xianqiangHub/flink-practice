@@ -15,7 +15,7 @@
         <module>flink-sql-submit</module>
         <module>real-pvuv</module>
         <module>real-flink-table</module>
-        <module>async-IO</module>
+        <module>real-dimensionTablejoin</module>
     </modules>
 
     <properties>

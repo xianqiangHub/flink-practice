@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hotItems</artifactId>
+    <artifactId>hot-items</artifactId>
 
     <dependencies>
         <!-- Apache Flink dependencies -->

@@ -35,6 +35,7 @@ public class MyTableAPI {
      * Blink Planner 对代码生成机制做了改进、对部分算子进行了优化，提供了丰富实用的新功能，如维表 join、Top N、MiniBatch、流式去重、聚合场景的数据倾斜优化等新功能。
      * Blink Planner 的优化策略是基于公共子图的优化算法，包含了基于成本的优化（CBO）和基于规则的优化(CRO)两种策略，优化更为全面。同时，Blink Planner 支持从 catalog 中获取数据源的统计信息，这对CBO优化非常重要。
      * Blink Planner 提供了更多的内置函数，更标准的 SQL 支持，
+     * Blink 不支持ExternalCatalog
      * <p>
      * Table API & SQL 未来
      * 1、Dynamic Tables
@@ -77,6 +78,8 @@ public class MyTableAPI {
 //        new FlinkKafkaConsumer<>("jaa,hotitem", new KeyedDeserializationSchema(), prop);
         fc.setStartFromLatest();
         DataStreamSource<String> source = bsEnv.addSource(fc);
+        //blink的查询计划
+//        bsTableEnv.explain();
         SingleOutputStreamOperator<ClickLog> mapSource = source.map(new MapFunction<String, ClickLog>() {
 
             @Override
@@ -146,7 +149,7 @@ public class MyTableAPI {
         //如果sink为可修改的数据库或者connect，实现更新
         //比如count 再来一条会3> (false,jack,3)     3> (true,jack,4)
         bsTableEnv.toRetractStream(table, Row.class).print();
-
+//        System.out.println(table.toString());  UnnamedTable$0
 
         /**
          *  //表转化为流 toAppendStream   toRetractStream
@@ -154,6 +157,17 @@ public class MyTableAPI {
          *缩进模式：始终可以使用此模式。返回值是boolean类型。它用true或false来标记数据的插入和撤回，
          *    返回true代表数据插入，false代表数据的撤回可以适用于更新，删除等场景
          */
+
+//        // SQL update with a registered table
+//// create and register a TableSink
+//        TableSink csvSink = new CsvTableSink("/path/to/file", ...);
+//        String[] fieldNames = {"product", "amount"};
+//        TypeInformation[] fieldTypes = {Types.STRING, Types.INT};
+//        tableEnv.registerTableSink("RubberOrders", fieldNames, fieldTypes, csvSink);
+//// run a SQL update query on the Table and emit the result to the TableSink
+//        tableEnv.sqlUpdate(
+//                "INSERT INTO RubberOrders SELECT product, amount FROM Orders WHERE product LIKE '%Rubber%'");
+//
         bsEnv.execute("kafkaTable"); //没有流不会阻塞
     }
 }
