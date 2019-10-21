@@ -33,7 +33,7 @@ public class AsyncIO {
         SingleOutputStreamOperator<String> unorderedWait = AsyncDataStream.unorderedWait(kafkaData, new AsyncReadRedis(), 1000, TimeUnit.MICROSECONDS, 100);
         unorderedWait.print();
         //设置程序名称
-        env.execute("data_to_redis_wangzh");
+        env.execute("data_to_redis");
 
     }
 }
