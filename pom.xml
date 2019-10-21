@@ -16,6 +16,7 @@
         <module>real-pvuv</module>
         <module>real-flink-table</module>
         <module>real-dimensionTablejoin</module>
+        <module>my-real-sql</module>
     </modules>
 
     <properties>

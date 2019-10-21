@@ -19,7 +19,9 @@ public class RedisAsyncTableFunction extends AsyncTableFunction<Row> {
     private final String[] fieldNames;
     private final TypeInformation[] fieldTypes;
 
-    //transient
+    //transient 短暂的不序列话
+    //线程安全的(多个客户端一起使用)，你可以不加 transient 关键字,初始化一次。
+    // 加上 transient,在 open 方法中，为每个 Task 实例初始化一个。
     private transient RedisAsyncCommands<String, String> async;
 
     public RedisAsyncTableFunction(String[] fieldNames, TypeInformation[] fieldTypes) {
