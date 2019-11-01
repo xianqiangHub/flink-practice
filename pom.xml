@@ -17,6 +17,7 @@
         <module>real-flink-table</module>
         <module>real-dimensionTablejoin</module>
         <module>my-real-sql</module>
+        <module>delay-process</module>
     </modules>
 
     <properties>
