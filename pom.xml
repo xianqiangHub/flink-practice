@@ -20,6 +20,7 @@
         <module>delay-process</module>
         <module>custom-metric</module>
         <module>sink-timer</module>
+        <module>broadcast-stream</module>
     </modules>
 
     <properties>

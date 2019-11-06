@@ -1,0 +1,29 @@
+数据源发送数据时候如果数据是集合，必须使用线程安全的集合类？？？
+
+flink和spark实现动态更新作业配置
+最难点在于如何确保节点状态在变更期间的一致性
+1、轮询拉取外部数据   pull
+2、控制流的方式       push
+spark属于第一种：拉取的话会有时间延迟
+其中在driver端有个线程不断更新变量，excutor端的广播变量加TTL，重新去driver端拉取？？？
+
+flink是第二种
+
+目前 Flink 的 Broadcast Stream 从效果上实现了控制流的作业状态更新，不过在编程模型上有点和一般直觉不同。
+原因主要在于 Flink 对控制流的处理方式和普通数据流保持了一致，最为明显的一点是控制流除了改变本地 State 还可以产生 output，
+这很大程度上影响了 Broadcast Stream 的使用方式。Broadcast Stream 的使用方式与普通的 DataStream 差别比较大，
+即需要和 DataStream 连接成为 BroadcastConnectedStream 后，再通过特殊的 BroadcastProcessFunction 来处理，
+而 BroadcastProcessFunction 目前只支持 类似于 RichCoFlatMap 效果的操作。RichCoFlatMap 可以间接实现对 Main Stream 的 Map
+转换（返回一只有一个元素的集合）和 Filter 转换（返回空集合），但无法实现 Window 类计算。
+这意味着如果用户希望改变 Window 算子的状态，那么需要将状态管理提前到上游的 BroadcastProcessFunction，
+然后再通过 BroadcastProcessFunction 的输出来将影响下游 Window 算子的行为。
+
+总结
+实时作业运行时动态加载变量可以令大大提升实时作业的灵活性和适应更多应用场景，
+目前无论是 Flink 还是 Spark Streaming 对动态加载变量的支持都不是特别完美。Spark Streaming 受限于 Micro Batch 的计算模型
+（虽然现在 2.3 版本引入 Continuous Streaming 来支持流式处理，但离成熟还需要一定时间），将作业变量作为一致性和实时性要求
+相对低的节点本地缓存，并不支持低延迟地、低成本地更新作业变量。Flink 将变量更新视为特殊的控制事件流，符合 Even Driven
+的流式计算框架定位，目前在业界已有比较成熟的应用。不过美中不足的是编程模型的易用性上有提高空间：控制流目前只能用于和数据流
+的 join，这意味着下游节点无法继续访问控制流或者需要把控制流数据插入到数据流中（这种方式并不优雅），从而降低了编程模型的灵活性。
+个人认为最好的情况是大部分的算子都可以被拓展为具有 BroadcastOperator，就像 RichFunction 一样，它们可以接收一个数据流和
+一个至多个控制流，并维护对应的 BroadcastState，这样控制流的接入成本将显著下降。
