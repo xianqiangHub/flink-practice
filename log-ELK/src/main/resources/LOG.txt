@@ -1,0 +1,11 @@
+log4j的作用的appender指定了用哪个框架里的类，看自定义
+
+flink任务日志指的是任务系统日志与用户代码里面log方式打印的日志，这些日志信息都可以在flink web页面上看到，目前任务的部署模式都是on yarn, 那么在yarn页面也可以看到，这些日志信息在开发环境或者测试环境量都是很小的，可以很方便的查看，但是在产生环境上，任务是7*24不间断的运行，那么势必会造成日志量会很大，这时打开flink web页面查看任务日志信息就会造成浏览器卡死，很难通过日志排查问题，所以需要将日志发送到外部的搜索系统中，方便搜索日志。
+关于开源的日志收集方案，很可能想到的就是Elasticsearch+Logstash+Kibana，也就是我们常说的ELK，通过Logstah将日志收集起来发送到Es中，然后通过Kibana查询Es中的数据，那么在这里主要需要考虑的就是Logstash如何搜集flink任务日志，需要在每台nodemanager节点上安装Logstash去收集日志，由于任务可能会重启那么日志的目录也是一个动态变换的，这种方式势必会占用集群的资源，同时后期集群扩容也需要在新的节点上安装Logstah，由于这些因素使用一种新的方案：通过log4j的方式将日志发送到kafka，logstash消费kafka 的数据。
+
+//https://mp.weixin.qq.com/s?__biz=MzU5MTc1NDUyOA==&mid=2247483833&idx=1&sn=9eaa4aebfdd59a056994f72907caaff9&chksm=fe2b65f6c95cece01854016f5ba3831ebdaa62a29759aa3858658aa13ecb5ec9c37d0117fb0a&mpshare=1&scene=1&srcid=1106mLWc82N6KqaBXMrDnyqc&sharer_sharetime=1573003222325&sharer_shareid=0468516597d0c1eb4dc5374de67f4ed5&pass_ticket=%2BI6Pvia0TzGbUxYufIiDiL4%2BxNcojL9nrSy3pluRHEEGyG%2BFVa2VL71%2BVPZTTzfr#rd
+//flink 运维系列之任务日志收集方案
+
+
+
+kafka->logstash->es->Kibana
