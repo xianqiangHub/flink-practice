@@ -15,7 +15,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * 定时定量输出的实例
+ *   ProcessingTime  定时定量输出的实例
  */
 public class SinkTimer {
 
@@ -29,8 +29,7 @@ public class SinkTimer {
         DataStreamSource<String> stream = env.addSource(consumer);
 
 
-
-//        stream.transform("mySink", TypeInformation.of(String.class), new BatchIntervalSink(12, 33L)).setParallelism(1);
+        stream.transform("mySink", TypeInformation.of(String.class), new BatchIntervalSink(12, 33L)).setParallelism(1);
 
         //java的定时调度器，自定义source是定时工作
 //        Timer timer = new Timer();

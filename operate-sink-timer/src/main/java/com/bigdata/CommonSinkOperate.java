@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @param <T>
  */
-public abstract class CommonSinkOperate<T extends Serializable> extends AbstractStreamOperator<Object> implements ProcessingTimeCallback, OneInputStreamOperator<T, Object> {
+public abstract class CommonSinkOperate<T extends Serializable, Object> extends AbstractStreamOperator<Object> implements ProcessingTimeCallback, OneInputStreamOperator<T, Object> {
 
     private List<T> list;
     private ListState<T> listState;

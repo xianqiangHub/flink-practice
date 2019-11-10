@@ -1,0 +1,30 @@
+三、Flink延时设计原理
+
+
+上图表示flink延时调用的总体流程，其设计也是借助于优先级队列来完成，队列中存储的数据结构如下：
+
+
+
+Key 表示KeyedStream中提取的Key
+
+Namespace 表示命名空间，在普通的KeyedStream中是固定的VoidNamespace,在WindowedStream表示的是Window
+
+Timestamp表示触发的时间戳，long类型优先级队列使用其Timestamp升序排序，每一次的定时触发都是与固定的key与时间戳绑定，即使注册多次相同的key与时间戳，但是也只会触发一次。
+
+注册
+ProcessingTime类型注册使用registerProcessingTimeTimer，传入的是一个触发的时间戳，内部会将获取到当前的Key、VoidNamespace 、timestamp封装成为一个InternalTimer对象存入优先级队列中，并且会使用ScheduledThreadPoolExecutor注册一个触发时间与当前时间差值大小的延时调用；
+
+EventTime类型注册使用registerEventTimeTimer,与ProcessingTime类型注册不同的是不需要做延时调用，并且二者使用的是不同的队列
+
+触发
+ProcessingTime类型的定时触发由注册的时候的延时调度触发，会不断遍历优先级队列触发任务，直到获取到InternalTimer对象中的时间小于延时调度时间；
+
+EventTime类型的定时器触发是由Watermark决定的，同样会不断遍历优先级队列触发任务，直到获取到InternalTimer对象中的时间小于Watermark值；
+
+持久化与恢复
+为了保证任务重启仍然能够执行未完成的延时调用，flink会在checkpoint过程中将优先级队列中的数据一起持久化到hdfs上，待下次任务重启仍然能够获取到这部分数据。由于EventTime类型定时器是由Watermark,那么只要任务产生watermark就能正常触发恢复的定时任务，但是ProcessingTime类型的定时器是由系统注册的延时调度来触发，所以在重启的时候获取到队列中第一个元素来注册延时调度，保证其恢复之后的正常触发。
+
+四、使用注意
+优先级队列默认使用的是内存存储，在一些数据量比较大并且重度依赖定时触发的任务会占用比较大的内存，可以选择Rocksdb存储定时信息
+
+由于flink中数据的处理涉及到key的切换，并且状态与key绑定，flink为了保证定时触发操作(onTimer)与正常处理(processElement)操作的线程安全，做了同步处理，在调用触发时必须要获取到锁，也就是二者同时只能有一个执行，因此一定要保证onTimer处理的速度，以免任务发生阻塞。

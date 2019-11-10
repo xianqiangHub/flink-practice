@@ -4,7 +4,7 @@ import org.apache.kafka.common.utils.Java;
 
 import java.util.List;
 
-public class BatchIntervalSink extends CommonSinkOperate<java.lang.String> {
+public class BatchIntervalSink extends CommonSinkOperate<String, String> {
 
     //子类没写属性，直接用父类的属性
     public BatchIntervalSink(int batchSize, Long batchInterval) {

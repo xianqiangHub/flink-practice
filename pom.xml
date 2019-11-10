@@ -19,9 +19,10 @@
         <module>my-real-sql</module>
         <module>delay-process</module>
         <module>custom-metric</module>
-        <module>sink-timer</module>
+        <module>operate-sink-timer</module>
         <module>broadcast-stream</module>
         <module>log-ELK</module>
+        <module>source-time-window</module>
     </modules>
 
     <properties>
