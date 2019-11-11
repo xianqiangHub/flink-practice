@@ -41,15 +41,7 @@ public class MysqlMain {
 
                 return new AdData(0, Integer.valueOf(split[1]), split[2], Integer.valueOf(split[3]), Long.valueOf(split[4]));
             }
-        }).flatMap(new RichFlatMapFunction<AdData, AdData>() {
-
-            @Override
-            public void flatMap(AdData value, Collector<AdData> out) throws Exception {
-
-
-            }
-        }).print();
-
+        }).flatMap(new MysqlFlatMapFunction()).print();
 
         env.execute("mysql");
     }
@@ -58,7 +50,7 @@ public class MysqlMain {
 /**
  * 1、异步加载过程是异步线程执行，如果异步线程加载抛出异常是无法被Task检测，也就是无法导致任务失败，
  * 那么就会导致使用的维表数据一直都是变化之前的，对于业务来说是无法容忍的，
- * 解决方式自定义一个维表关联的StreamOperator, 可获取到StreamTask， 然后再异步加载的异常处理中
+ * 解决方式:自定义一个维表关联的StreamOperator, 可获取到StreamTask， 然后再异步加载的异常处理中
  * 调用StreamTask.handleAsyncException方法，就可以导致任务失败，给用户发出警告
  * <p>
  * 2、维表全量加载是在每个task里面执行，那么就会导致每个task里面都有一份全量的维表数据，可采取优化方式是
