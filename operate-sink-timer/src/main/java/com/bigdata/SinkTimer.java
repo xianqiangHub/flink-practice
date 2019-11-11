@@ -15,7 +15,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- *   ProcessingTime  定时定量输出的实例
+ * ProcessingTime  定时定量输出的实例
+ * <p>
+ * 使用flink自带定时功能，首先我们得能够获取到ProcessingTimeService这个对象，
+ * 但是该对象的获取只能在AbstractStreamOperator通过getProcessingTimeService方法获取到，
+ * 那么我们可以自定义一个StreamOperator 继承AbstractStreamOperator：
  */
 public class SinkTimer {
 

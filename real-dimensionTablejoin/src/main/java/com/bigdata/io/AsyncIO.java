@@ -32,8 +32,9 @@ public class AsyncIO {
         //从KafkaData流的每一个元素，去redis异步的获取值，返回
         SingleOutputStreamOperator<String> unorderedWait = AsyncDataStream.unorderedWait(kafkaData, new AsyncReadRedis(), 1000, TimeUnit.MICROSECONDS, 100);
         unorderedWait.print();
-        //设置程序名称
-        env.execute("data_to_redis");
 
+
+
+        env.execute("data_to_redis");
     }
 }

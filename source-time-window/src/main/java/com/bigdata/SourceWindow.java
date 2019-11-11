@@ -10,6 +10,7 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindo
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 
 import java.util.Properties;
 
@@ -40,16 +41,17 @@ public class SourceWindow {
         consumer.setStartFromEarliest();
         DataStreamSource<String> stream = env.addSource(consumer);
 
-//        stream.keyBy("key").countWindow(5)
+////        stream.keyBy("key").countWindow(5)
+//
+//        stream.map(new MapFunction<String, Tuple2<String,String>>() {
+//            @Override
+//            public Tuple2 map(String value) throws Exception {
+//                return new Tuple2(value,"a");
+//            }
+//        })
+////                keyBy(0).window(TumblingProcessingTimeWindows.of(Time.seconds(1),Time.days(1)))
+////                timeWindow(Time.seconds(5)).max(1);
 
-        stream.map(new MapFunction<String, Tuple2<String,String>>() {
-            @Override
-            public Tuple2 map(String value) throws Exception {
-                return new Tuple2(value,"a");
-            }
-        })
-//                keyBy(0).window(TumblingProcessingTimeWindows.of(Time.seconds(1),Time.days(1)))
-//                timeWindow(Time.seconds(5)).max(1);
 
         env.execute("a");
     }

@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 使用flink自带定时功能，首先我们得能够获取到ProcessingTimeService这个对象，
- * 但是该对象的获取只能在AbstractStreamOperator通过getProcessingTimeService方法获取到，
- * 那么我们可以自定义一个StreamOperator 继承AbstractStreamOperator：
  *
  * 定义一个CommonSinkOperator的抽象类，继承AbstractStreamOperator，并且实现ProcessingTimeCallback与OneInputStreamOperator接口，那么看下类里面的方法，
  * <p>
