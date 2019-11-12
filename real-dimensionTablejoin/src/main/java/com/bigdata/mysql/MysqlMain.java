@@ -1,5 +1,6 @@
 package com.bigdata.mysql;
 
+import com.bigdata.hbase.HbaseAsyncLRU;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
