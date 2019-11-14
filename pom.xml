@@ -23,6 +23,7 @@
         <module>broadcast-stream</module>
         <module>log-ELK</module>
         <module>state-time-window</module>
+        <module>example</module>
     </modules>
 
     <properties>
