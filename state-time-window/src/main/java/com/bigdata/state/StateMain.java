@@ -2,6 +2,10 @@ package com.bigdata.state;
 
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.common.state.StateTtlConfig;
+import org.apache.flink.api.common.state.ValueState;
+import org.apache.flink.api.common.state.ValueStateDescriptor;
+import org.apache.flink.api.common.time.Time;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -37,7 +41,12 @@ public class StateMain {
             @Override
             public void open(Configuration parameters) throws Exception {
 
-//                getRuntimeContext().getState()
+                ValueStateDescriptor<String> valuestate = new ValueStateDescriptor<String>("value",String.class);
+
+                StateTtlConfig.Builder builder = StateTtlConfig.newBuilder(Time.days(1));
+                valuestate.enableTimeToLive(builder.build());
+                ValueState<String> state = getRuntimeContext().getState(valuestate);
+
             }
 
             @Override
