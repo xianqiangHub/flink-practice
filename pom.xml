@@ -22,7 +22,7 @@
         <module>operate-sink-timer</module>
         <module>broadcast-stream</module>
         <module>log-ELK</module>
-        <module>source-time-window</module>
+        <module>state-time-window</module>
     </modules>
 
     <properties>
