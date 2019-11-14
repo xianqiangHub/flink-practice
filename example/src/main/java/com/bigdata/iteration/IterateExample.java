@@ -45,6 +45,10 @@ import java.util.Random;
  *   <li>directed outputs.
  * </ul>
  * </p>
+ *	重定向流输出的结果回到上游
+ * 迭代流:先生成迭代流，对迭代流做个操作，定义个closed  -》有返回结果的数据再进入中间的操作  获取符合要求的结果
+ * 	每次数据流切成两部分，能选择出来的元素继续迭代，没选择出来的，用相反的选择去拿到 即符合要求的数据
+ * 适合模型的迭代训练
  */
 public class IterateExample {
 
@@ -80,21 +84,25 @@ public class IterateExample {
 		}
 
 		// create an iterative data stream from the input with 5 second timeout
+		//生成迭代流
 		IterativeStream<Tuple5<Integer, Integer, Integer, Integer, Integer>> it = inputStream.map(new InputMap())
 				.iterate(5000);
 
 		// apply the step function to get the next Fibonacci number
 		// increment the counter and split the output with the output selector
+		//为feedback，就是需要迭代计算的部分，，，此处做了灵活的切分，供关闭时选择
 		SplitStream<Tuple5<Integer, Integer, Integer, Integer, Integer>> step = it.map(new Step())
 				.split(new MySelector());
 
 		// close the iteration by selecting the tuples that were directed to the
 		// 'iterate' channel in the output selector
+		//自定义过滤出可以返回的数据，接着返回迭代部分的计算
 		it.closeWith(step.select("iterate"));
 
 		// to produce the final output select the tuples directed to the
 		// 'output' channel then get the input pairs that have the greatest iteration counter
 		// on a 1 second sliding window
+		//获取迭代之后符合要求的数据
 		DataStream<Tuple2<Tuple2<Integer, Integer>, Integer>> numbers = step.select("output")
 				.map(new OutputMap());
 
