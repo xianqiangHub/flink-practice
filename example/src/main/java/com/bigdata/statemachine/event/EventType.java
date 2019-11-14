@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.bigdata.event;
+package com.bigdata.statemachine.event;
 
 /**
  * The type of the event processed by the state machine.

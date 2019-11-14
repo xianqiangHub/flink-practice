@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package com.bigdata.dfa;
+package com.bigdata.statemachine.dfa;
 
-import com.bigdata.event.EventType;
+import com.bigdata.statemachine.event.EventType;
 
 /**
  * Simple combination of EventType and State.

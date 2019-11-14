@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package com.bigdata.event;
+package com.bigdata.statemachine.event;
 
 
-import com.bigdata.dfa.State;
+import com.bigdata.statemachine.dfa.State;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 

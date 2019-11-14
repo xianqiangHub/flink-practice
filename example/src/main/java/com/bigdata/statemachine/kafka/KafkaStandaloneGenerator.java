@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package com.bigdata.kafka;
+package com.bigdata.statemachine.kafka;
 
-import com.bigdata.event.Event;
-import com.bigdata.generator.StandaloneThreadedGenerator;
+import com.bigdata.statemachine.event.Event;
+import com.bigdata.statemachine.generator.StandaloneThreadedGenerator;
 import org.apache.flink.util.Collector;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;

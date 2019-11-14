@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package com.bigdata;
+package com.bigdata.statemachine;
 
-import com.bigdata.dfa.State;
-import com.bigdata.event.Alert;
-import com.bigdata.event.Event;
-import com.bigdata.generator.EventsGeneratorSource;
-import com.bigdata.kafka.EventDeSerializer;
+import com.bigdata.statemachine.dfa.State;
+import com.bigdata.statemachine.event.Alert;
+import com.bigdata.statemachine.event.Event;
+import com.bigdata.statemachine.generator.EventsGeneratorSource;
+import com.bigdata.statemachine.kafka.EventDeSerializer;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;

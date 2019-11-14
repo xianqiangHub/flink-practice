@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package com.bigdata.generator;
+package com.bigdata.statemachine.generator;
 
-import com.bigdata.event.Event;
+import com.bigdata.statemachine.event.Event;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 

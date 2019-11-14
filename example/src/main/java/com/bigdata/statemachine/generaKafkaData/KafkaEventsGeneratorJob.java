@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package com.bigdata.generaKafkaData;
+package com.bigdata.statemachine.generaKafkaData;
 
-import com.bigdata.generator.EventsGeneratorSource;
-import com.bigdata.kafka.EventDeSerializer;
+import com.bigdata.statemachine.generator.EventsGeneratorSource;
+import com.bigdata.statemachine.kafka.EventDeSerializer;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer010;

@@ -1,4 +1,4 @@
-package com.bigdata.kafka;
+package com.bigdata.statemachine.kafka;
 
 /**
  * 见broadcast-stream

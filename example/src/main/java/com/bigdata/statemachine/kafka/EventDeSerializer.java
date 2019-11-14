@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.bigdata.kafka;
+package com.bigdata.statemachine.kafka;
 
 
-import com.bigdata.event.Event;
-import com.bigdata.event.EventType;
+import com.bigdata.statemachine.event.Event;
+import com.bigdata.statemachine.event.EventType;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;

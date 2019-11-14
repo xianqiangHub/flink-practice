@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.bigdata.event;
+package com.bigdata.statemachine.event;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 

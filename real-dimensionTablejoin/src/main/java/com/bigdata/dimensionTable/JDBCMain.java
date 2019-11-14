@@ -9,7 +9,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
 
-public class DimensionMain {
+public class JDBCMain {
 
     public static void main(String[] args) throws Exception {
         //blink 通过lookup able table source 实现维表jion

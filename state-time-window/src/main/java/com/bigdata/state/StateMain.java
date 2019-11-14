@@ -24,6 +24,9 @@ import java.util.Properties;
  * ListCheckpointed
  * <p>
  * https://developer.aliyun.com/article/712711
+ *
+ * ttlconfig:
+ * https://cloud.tencent.com/developer/article/1452844
  */
 public class StateMain {
 

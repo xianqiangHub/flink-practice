@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package com.bigdata.generator;
+package com.bigdata.statemachine.generator;
 
-import com.bigdata.dfa.EventTypeAndState;
-import com.bigdata.dfa.State;
-import com.bigdata.event.Event;
-import com.bigdata.event.EventType;
+import com.bigdata.statemachine.dfa.EventTypeAndState;
+import com.bigdata.statemachine.dfa.State;
+import com.bigdata.statemachine.event.Event;
+import com.bigdata.statemachine.event.EventType;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
