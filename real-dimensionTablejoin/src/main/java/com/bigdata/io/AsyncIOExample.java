@@ -47,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Example to illustrates how to use {@link AsyncFunction}.
+ * 有获取连接的失败率逻辑的实现
  */
 public class AsyncIOExample {
 

@@ -24,6 +24,7 @@
         <module>log-ELK</module>
         <module>state-time-window</module>
         <module>example</module>
+        <module>real-join</module>
     </modules>
 
     <properties>
