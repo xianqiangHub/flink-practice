@@ -13,19 +13,23 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindo
 import org.apache.flink.streaming.api.windowing.time.Time;
 
 /**
- * 流的关联有
- * JoinedStream & CoGroupedStreams
- * JoinedStreams在底层又调用了CoGroupedStream来实现Join功能。
- * 实际上着两者还是有区别的，首先co-group侧重的是group,是对同一个key上的两组集合进行操作，
- * 而join侧重的是pair,是对同一个key上的每对元素操作。
- * co-group比join更通用一些，因为join只是co-group的一个特例，所以join是可以基于co-group来实现的（当然有优化的空间）。
- * 而在co-group之外又提供了join接口是因为用户更熟悉join
+ * 在window之前调用的cogroup，和cogroup一样，join是cogroup的特例
+ * 对keywindow触发的数据，也是在apply拆分到不同的list，
+ * 之后通过flatJoinCoGroupFunction,笛卡尔积生成，传给自定义的function
  * <p>
- * connect和union
- * ①.ConnectedStreams只能连接两个流，而union可以多余两个流；
- * ②.ConnectedStreams连接的两个流类型可以不一致，而union连接的流的类型必须一致；
- * ③.ConnectedStreams会对两个流的数据应用不同的处理方法，并且双流之间可以共享状态。
- * 这再第一个流的输入会影响第二流时，会非常有用。
+ * //From JoinedCoGroupFunction::CoGroup
+ *
+ * @Override public void coGroup(Iterable<T1> first, Iterable<T2> second, Collector<T> out) throws Exception {
+ * // 双层循环产生数据的笛卡尔积
+ * for (T1 val1: first) {
+ * for (T2 val2: second) {
+ * out.collect(wrappedFunction.join(val1, val2));
+ * }
+ * }
+ * }
+ * <p>
+ * joinfunction的两个输入时笛卡尔积的 左右两个元素
+ * flink通过双层for循环实现两条流的join
  */
 public class WindowJoin {
 
