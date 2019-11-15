@@ -1,6 +1,6 @@
-package com.bigdata.JoinOrCogroup;
+package com.bigdata.JoinAndCogroup;
 
-import com.bigdata.JoinOrCogroup.utils.WindowJoinSampleData;
+import com.bigdata.JoinAndCogroup.utils.WindowJoinSampleData;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;

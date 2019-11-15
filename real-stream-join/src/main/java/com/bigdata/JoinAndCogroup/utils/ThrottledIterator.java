@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.bigdata.JoinOrCogroup.utils;
+package com.bigdata.JoinAndCogroup.utils;
 
 import java.io.Serializable;
 import java.util.Iterator;

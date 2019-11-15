@@ -16,7 +16,15 @@ package com.bigdata;
  * ③.ConnectedStreams会对两个流的数据应用不同的处理方法，并且双流之间可以共享状态。
  * 这再第一个流的输入会影响第二流时，会非常有用。
  *
+ * keyby:
+ * union生成keyedstream
+ * connect生成connectStream
+ *
  *  相同的key再一台机器上处理，可能会有数据倾斜
+ *
+ *windowJoin & interval Join
+ *  windowJoin 用的 uninon
+ *  intervalJoin 用的 connect
  */
 public class JoinMain {
 

@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package com.bigdata.JoinOrCogroup.utils;
+package com.bigdata.JoinAndCogroup.utils;
 
-import com.bigdata.JoinOrCogroup.WindowJoin;
+import com.bigdata.JoinAndCogroup.WindowJoin;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.tuple.Tuple2;

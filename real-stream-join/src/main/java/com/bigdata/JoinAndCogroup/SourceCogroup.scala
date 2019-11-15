@@ -1,4 +1,4 @@
-package com.bigdata.JoinOrCogroup
+package com.bigdata.JoinAndCogroup
 
 import java.lang
 import java.util.Properties
