@@ -1,4 +1,4 @@
-package com.bigdata;
+package com.bigdata.table;
 
 import java.sql.Timestamp;
 
