@@ -13,10 +13,8 @@
         <module>real-time-ETL</module>
         <module>connect-hive</module>
         <module>flink-sql-submit</module>
-        <module>real-pvuv</module>
         <module>real-flink-table</module>
         <module>real-dimensionTablejoin</module>
-        <module>my-real-sql</module>
         <module>delay-process</module>
         <module>custom-metric</module>
         <module>operate-sink-timer</module>
@@ -25,6 +23,7 @@
         <module>state-time-window</module>
         <module>example</module>
         <module>real-stream-join</module>
+        <module>real-uv</module>
     </modules>
 
     <properties>
