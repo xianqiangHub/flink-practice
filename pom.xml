@@ -24,6 +24,7 @@
         <module>example</module>
         <module>real-stream-join</module>
         <module>real-uv</module>
+        <module>CEP</module>
     </modules>
 
     <properties>
