@@ -1,12 +1,19 @@
 package com.bigdata;
 
+import org.apache.flink.cep.CEP;
+import org.apache.flink.cep.PatternSelectFunction;
+import org.apache.flink.cep.PatternStream;
 import org.apache.flink.cep.pattern.Pattern;
+import org.apache.flink.cep.pattern.conditions.IterativeCondition;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
+import org.apache.flink.streaming.api.windowing.time.Time;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -35,7 +42,32 @@ public class CEPDemo {
 //        警告：某数据中心在10秒内连续两次上报的流量超过认定的正常值；
 //        报警：某数据中心在30秒内连续两次匹配警告；
 
-        Pattern.<LoginEvent>begin("")
+        Pattern<LoginEvent, LoginEvent> pattern = Pattern.<LoginEvent>begin("begin")
+                .where(new IterativeCondition<LoginEvent>() {
+                    //true for values that should be retained,
+                    @Override
+                    public boolean filter(LoginEvent value, Context<LoginEvent> ctx) throws Exception {
+                        return value.status.equals("fail");
+                    }
+                })
+                .next("next")
+                .where(new IterativeCondition<LoginEvent>() {
+                    @Override
+                    public boolean filter(LoginEvent value, Context<LoginEvent> ctx) throws Exception {
+                        return value.status.equals("fail");
+                    }
+                })
+                .within(Time.seconds(10));
+
+        PatternStream<LoginEvent> patternStream = CEP.pattern(source, pattern);
+
+        SingleOutputStreamOperator<String> select = patternStream.select(new PatternSelectFunction<LoginEvent, String>() {
+            @Override
+            public String select(Map<String, List<LoginEvent>> pattern) throws Exception {
+
+                return null;
+            }
+        });
 
 
     }
