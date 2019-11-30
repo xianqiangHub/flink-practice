@@ -1,4 +1,4 @@
-package com.bigdata;
+package com.bigdata.demoOne;
 
 public class LoginEvent {
     String id;
