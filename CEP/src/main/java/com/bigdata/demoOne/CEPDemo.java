@@ -28,9 +28,9 @@ public class CEPDemo {
 
         ArrayList<LoginEvent> list = new ArrayList<>();
         list.add(new LoginEvent("1", "192.168.0.1", "fail", 1558430842L));
-//        list.add(new LoginEvent("1", "192.168.0.1", "fail", 1558430843L));
-        list.add(new LoginEvent("1", "192.168.0.1", "fail", 1558430844L));
-        list.add(new LoginEvent("4", "192.168.10.10", "success", 1558430845L));
+        list.add(new LoginEvent("1", "192.168.0.2", "faila", 1558430843L));
+//        list.add(new LoginEvent("1", "192.168.0.3", "fail", 1558430844L));
+        list.add(new LoginEvent("4", "192.168.10.10", "fail", 1558430845L));
 
         SingleOutputStreamOperator<LoginEvent> source = env.fromCollection(list).assignTimestampsAndWatermarks(new AscendingTimestampExtractor<LoginEvent>() {
             @Override
@@ -45,7 +45,7 @@ public class CEPDemo {
                     //true for values that should be retained,
                     @Override
                     public boolean filter(LoginEvent value, Context<LoginEvent> ctx) throws Exception {
-                        System.out.println("begin" + value.id);
+                        System.out.println("begin" + value.ip);
                         return value.status.equals("fail");
                     }
                 })
@@ -53,7 +53,7 @@ public class CEPDemo {
                 .where(new IterativeCondition<LoginEvent>() {
                     @Override
                     public boolean filter(LoginEvent value, Context<LoginEvent> ctx) throws Exception {
-                        System.out.println("next" + value.id);
+                        System.out.println("next" + value.ip);
                         return value.status.equals("fail");
                     }
                 })
@@ -67,6 +67,7 @@ public class CEPDemo {
         }), pattern);
 
         SingleOutputStreamOperator<String> select = patternStream.select(new PatternSelectFunction<LoginEvent, String>() {
+           //符合匹配规则的再输出
             @Override
             public String select(Map<String, List<LoginEvent>> pattern) throws Exception {
 
@@ -80,7 +81,7 @@ public class CEPDemo {
                     System.out.println("second" + loginEvent.ip);
                 }
 
-                return "";
+                return "aa";
             }
         });
 
