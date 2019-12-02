@@ -15,9 +15,13 @@ import java.util.Properties;
  * https://mp.weixin.qq.com/s?__biz=MzI0NTIxNzE1Ng==&mid=2651218312&idx=1&sn=edfa0a4ff115d8f84bc978c38ebda9dd&chksm=f2a32363c5d4aa757e2f5642a0caaa6d2be83bdbf02fa005e22ef034f4e24cb4ffe12cf18cc3&mpshare=1&scene=1&srcid=&sharer_sharetime=1572788370267&sharer_shareid=0468516597d0c1eb4dc5374de67f4ed5&pass_ticket=%2F2wb2c5501xELKeMZOAnufAh5zbj5Cvthk0qzY0kzfpGG3yPiVHYH3Ubm8Q%2BUdV9#rd
  * <p>
  * metric监控源码分析：https://blog.csdn.net/qq_21653785/article/details/79625601
- *
+ * <p>
  * 通过restful API获取指标
  * https://blog.csdn.net/aA518189/article/details/88952910
+ * <p>
+ * 对flink任务指标监控展示，
+ * influxdb+grafana的方式，
+ * 或者Prometheus
  */
 public class MyMetrics {
 
