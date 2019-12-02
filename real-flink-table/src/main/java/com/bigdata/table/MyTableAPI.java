@@ -150,7 +150,7 @@ public class MyTableAPI {
 //        System.out.println(table.toString());  UnnamedTable$0
 
         /**
-         *  //表转化为流 toAppendStream   toRetractStream
+         *  //表转化为流 toAppendStream   toRetractStream  UpsertStreamTableSink（效率上比RetractStreamTableSink高。）
          *追加模式：动态Table仅通过INSERT更改修改时才能使用此模式，如果更新或删除操作使用追加模式会失败报错
          *缩进模式：始终可以使用此模式。返回值是boolean类型。它用true或false来标记数据的插入和撤回，
          *    返回true代表数据插入，false代表数据的撤回可以适用于更新，删除等场景
