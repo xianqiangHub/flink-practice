@@ -68,6 +68,12 @@
             <version>${flink.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.tensorflow</groupId>
+            <artifactId>tensorflow</artifactId>
+            <version>1.13.1</version>
+        </dependency>
+
     </dependencies>
 
 
