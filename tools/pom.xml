@@ -9,9 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>real-pvuv</artifactId>
+    <artifactId>tools</artifactId>
 
     <dependencies>
+        <!-- core dependencies -->
+
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-java</artifactId>
@@ -26,28 +28,6 @@
             <artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.7</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
-        <!--HLL-->
-        <dependency>
-            <groupId>net.agkn</groupId>
-            <artifactId>hll</artifactId>
-            <version>1.6.0</version>
-        </dependency>
     </dependencies>
 
 </project>
