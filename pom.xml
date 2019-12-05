@@ -25,6 +25,7 @@
         <module>real-stream-join</module>
         <module>real-uv</module>
         <module>CEP</module>
+        <module>tools</module>
     </modules>
 
     <properties>
@@ -78,6 +79,12 @@
                 <groupId>org.apache.bahir</groupId>
                 <artifactId>flink-connector-kudu_2.11</artifactId>
                 <version>1.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.25</version>
             </dependency>
 
         </dependencies>
