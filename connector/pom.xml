@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>flink-parent</artifactId>
+        <groupId>com.bigdata</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>connector</artifactId>
+
+    <dependencies>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.bahir/bahir-parent -->
+        <dependency>
+            <groupId>org.apache.bahir</groupId>
+            <artifactId>bahir-parent_2.11</artifactId>
+            <version>2.4.0</version>
+            <type>pom</type>
+        </dependency>
+
+        <!--此模块与Apache Kudu 1.7.1（最新稳定版本）兼容-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.bahir</groupId>-->
+            <!--<artifactId>flink-connector-kudu_2.11</artifactId>-->
+            <!--<version>1.1-SNAPSHOT</version>-->
+        <!--</dependency>-->
+
+        <!--&lt;!&ndash;compatible with InfluxDB 1.3.x&ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.bahir</groupId>-->
+            <!--<artifactId>flink-connector-influxdb_2.11</artifactId>-->
+            <!--<version>1.1-SNAPSHOT</version>-->
+        <!--</dependency>-->
+    </dependencies>
+
+</project>
