@@ -1,4 +1,4 @@
-package com.bigdata.demoFour;
+package com.bigdata.timeoutDemo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -22,9 +22,15 @@ import java.util.Map;
 /**
  * 这个例子是判断订单是否正常，譬如说，订单的有效时间是30分钟，所以要在30分钟内完成支付，才算一次正常的支付。
  * 如果超过了30分钟，用户依然发起了支付动作，这个时候就是有问题的，要发出一条指令告诉用户该订单已经超时。
+ * 超过time的状态会被清楚
  * <p>
  * 1、超时不是过了设定时间，是下面来的一条数据超过设定时间
  * 2、如果第一个pattern匹配，超时之后第二个pattern一直不匹配，来一条报一次超时，当第二个pattern匹配上，在之后正常处理
+ * <p>
+ * 问题：
+ * within 是控制在整个规则上，而不是某一个状态节点上，所以不论当前的状态是处在哪个状态节点，超时后都会被旁路输出。
+ * 那么就需要考虑能否通过时间来直接对状态转移做到精确的控制，而不是通过规则超时这种曲线救国的方式。
+ * 于是乎，在通过消息触发状态的转移之外，需要增加通过时间触发状态的转移支持。 ??????????????
  */
 public class TestCEP {
 
@@ -90,7 +96,7 @@ public class TestCEP {
                         //匹配上第二个条件的
                         List<Tuple3<String, String, String>> endList = pattern.get("next");
 
-                        Tuple3<String, String, String> tuple3 = endList.get(0);  //只要规定时间完成订单的 pay
+                        Tuple3<String, String, String> tuple3 = startList.get(0);  //只要规定时间完成订单的 pay
                         return tuple3.toString() + "正常";
                     }
                 }

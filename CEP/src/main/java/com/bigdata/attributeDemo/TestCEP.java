@@ -1,4 +1,4 @@
-package com.bigdata.demoThree;
+package com.bigdata.attributeDemo;
 
 import com.bigdata.fileSource.ReadLineSource;
 import org.apache.flink.cep.CEP;
@@ -22,7 +22,7 @@ public class TestCEP {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
         DataStreamSource<String> stream = env.addSource(new ReadLineSource("threeData.txt"));
-//最简单，单挑的熟悉
+//最简单，单条的熟悉
 //        Pattern pattern = Pattern.<String>begin("start").where(new IterativeCondition<String>() {
 //            @Override
 //            public boolean filter(String s, Context<String> context) {

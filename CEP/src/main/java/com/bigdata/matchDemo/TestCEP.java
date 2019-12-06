@@ -1,4 +1,4 @@
-package com.bigdata.demoOne;
+package com.bigdata.matchDemo;
 
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.cep.CEP;
@@ -26,6 +26,8 @@ import java.util.Map;
  * followby(): 中间可以有不符合的数据，依然可以匹配输出结果，不理解的是不管在第二个pattern符不符合都判断了两次
  * next192.168.0.2
  * next192.168.0.2
+ *  在第二个匹配上之后，匹配上第一个的多个结果都会输出
+ *
  */
 public class TestCEP {
 
@@ -36,9 +38,9 @@ public class TestCEP {
 
         ArrayList<LoginEvent> list = new ArrayList<>();
         list.add(new LoginEvent("1", "192.168.0.1", "fail", 1558430842L));
-        list.add(new LoginEvent("1", "192.168.0.2", "success", 1558430843L));
+        list.add(new LoginEvent("1", "192.168.0.2", "fail", 1558430843L));
         list.add(new LoginEvent("1", "192.168.0.3", "fail", 1558430844L));
-        list.add(new LoginEvent("4", "192.168.10.10", "success", 1558430845L));
+        list.add(new LoginEvent("1", "192.168.10.10", "success", 1558430845L));
 
         SingleOutputStreamOperator<LoginEvent> source = env.fromCollection(list).assignTimestampsAndWatermarks(new AscendingTimestampExtractor<LoginEvent>() {
             @Override
@@ -56,13 +58,13 @@ public class TestCEP {
                         return value.status.equals("fail");
                     }
                 })
-//                .next("next")
-                .followedBy("next")
+                .next("next")
+//                .followedBy("next")
                 .where(new IterativeCondition<LoginEvent>() {
                     @Override
                     public boolean filter(LoginEvent value, Context<LoginEvent> ctx) throws Exception {
                         System.out.println("next" + value.ip);
-                        return value.status.equals("fail");
+                        return value.status.equals("success");
                     }
                 })
                 .within(Time.seconds(10));

@@ -1,4 +1,4 @@
-package com.bigdata.demoFour;
+package com.bigdata.timeoutDemo;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
@@ -54,7 +54,7 @@ public class MySource extends RichSourceFunction<String> {
 
         map.put("userid", "2");
         map.put("orderid", "2223");
-        map.put("behave", "order");
+        map.put("behave", "pay");
         ctx.collect(JSON.toJSONString(map));
 //        Thread.sleep(1000);
     }
