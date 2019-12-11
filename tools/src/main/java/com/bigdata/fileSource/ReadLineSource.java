@@ -24,7 +24,7 @@ public class ReadLineSource extends RichParallelSourceFunction<String> {
 //        BufferedReader reader = new BufferedReader(new FileReader(filePath));
         while (!canceled && reader.ready()) {
             String line = reader.readLine();
-            System.out.println("读取：".concat(line));
+//            System.out.println("读取：".concat(line));
             sourceContext.collect(line);
             //100 ms
             Thread.sleep(1000);
