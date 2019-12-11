@@ -1,0 +1,7 @@
+1、cancel和stop
+stop是优雅的停止，但必须实现stoppableFunction接口，调用stop方法，停止产生数据，处理完数据后优雅的停止
+cancel是调用cancel()方法，尽快取消任务，没有取消的，开始定期关闭线程，可以保存savepoint，一种在配置中指定savepoint目录，一种每次调用指定
+2、流式数据倾斜
+通过查看各subtask的数据流入流出量，很容易看出数据是否有倾斜
+
+
