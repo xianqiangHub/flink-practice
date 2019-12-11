@@ -1,0 +1,16 @@
+https://mp.weixin.qq.com/s/9qEEYBddelJUMHlq9Bqd8A
+
+1、Flink Checkpoint 目录的清除策略
+一种为取消任务不能删除checkpoint目录，一种取消后删除，相同点失败后都不删除，savepoint不会删除
+2、生产环境应该选择哪种清除策略
+取消后不删除
+3、生产环境必须定期脚本清理 Checkpoint 和 Savepoint 目录
+定期手动删除，fs的根据目录日期（每次checkpoint目录都会更新）删除，rocksDB增量删除要检查元数据
+4、RocksDB 增量 Checkpoint 实现原理
+增量checkpoint的实现是通过RocksDB,其为LSM实现和HBase一样，先在内存做增删改，之后固定刷写到磁盘，磁盘上一个个文件是
+有序的实现增量
+5、如何合理地删除 Checkpoint 目录？
+和hbase一样，为了提高查询效率，这些小文件会合并，但有些访问频率低的，可能长时间没有合并，导致任务依赖很早之前的状态
+根据日期删除之后，会找不到文件恢复失败
+通过分析_metadata，找到任务依赖的所有sstable，根据结果删除
+6、通过解析 Flink Checkpoint 的元数据信息来合理清理 Checkpoint 信息
