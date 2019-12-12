@@ -9,13 +9,17 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.scala.function.ProcessAllWindowFunction;
 import org.apache.flink.streaming.api.scala.function.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 import scala.collection.Iterable;
 
+import java.util.Comparator;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -31,12 +35,55 @@ public class WindowAllTopN {
 
         SingleOutputStreamOperator<Tuple2<String, Integer>> source = stream.flatMap(new LineSplitter()).keyBy(0).sum(1);
 
-        source.keyBy(new TupleKeySelectorByStart()).timeWindow(Time.minutes(1)).process(new keyTopFunction(1)).print();
+//        source.print();
+        source.keyBy(new TupleKeySelectorByStart())
+                .timeWindow(Time.seconds(10))
+                .process(new keyTopFunction(2))
+                .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(1))) //和第一个时间窗口大小一样
+                .process(new windowTopFunction(2))
+                .print();
+
 
         env.execute(WindowAllTopN.class.getSimpleName());
     }
 
-    public static class keyTopFunction extends ProcessWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow> {
+    private static class windowTopFunction extends org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, TimeWindow> {
+
+        private int topSize = 10;
+
+        public windowTopFunction(int topSize) {
+            this.topSize = topSize;
+        }
+
+        @Override
+        public void process(Context context, java.lang.Iterable<Tuple2<String, Integer>> elements, Collector<Tuple2<String, Integer>> out) throws Exception {
+            //按照key进行排序  降序
+            TreeMap<Integer, Tuple2<String, Integer>> topMap = new TreeMap<>(new Comparator<Integer>() {
+                @Override
+                public int compare(Integer x, Integer y) {
+                    return (x > y) ? -1 : 1;
+                }
+            });
+
+            for (Tuple2<String, Integer> element : elements) {
+                //元素放到treemap
+                topMap.put(element.f1, element);
+                if (topMap.size() > topSize) {
+
+                    topMap.pollLastEntry();  //降序去除最后一个元素
+                }
+            }
+
+            for (Map.Entry<Integer, Tuple2<String, Integer>> entry : topMap.entrySet()) {
+
+                out.collect(entry.getValue());
+            }
+
+        }
+    }
+
+    //no instance(s) of type variable(s) R
+    public static class keyTopFunction extends org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow> {
 
         private int topSize = 10;
 
@@ -44,14 +91,31 @@ public class WindowAllTopN {
             this.topSize = topSize;
         }
 
-        public keyTopFunction() {
-        }
-
         @Override
-        public void process(String key, Context context, Iterable<Tuple2<String, Integer>> elements, Collector<Tuple2<String, Integer>> out) throws Exception {
+        public void process(String key, Context context, java.lang.Iterable<Tuple2<String, Integer>> elements, Collector<Tuple2<String, Integer>> out) throws Exception {
 
+            //按照key进行排序  降序
+            TreeMap<Integer, Tuple2<String, Integer>> topMap = new TreeMap<>(new Comparator<Integer>() {
+                @Override
+                public int compare(Integer x, Integer y) {
+                    return (x > y) ? -1 : 1;
+                }
+            });
 
-//            out.collect();
+            for (Tuple2<String, Integer> element : elements) {
+                //元素放到treemap
+                topMap.put(element.f1, element);
+                if (topMap.size() > topSize) {
+
+                    topMap.pollLastEntry();  //降序去除最后一个元素
+                }
+            }
+
+            for (Map.Entry<Integer, Tuple2<String, Integer>> entry : topMap.entrySet()) {
+
+                out.collect(entry.getValue());
+            }
+
         }
     }
 
@@ -61,7 +125,7 @@ public class WindowAllTopN {
         @Override
         public String getKey(Tuple2<String, Integer> value) throws Exception {
             // TODO Auto-generated method stub
-            return value.f0;
+            return value.f0.substring(0, 1);
         }
 
     }

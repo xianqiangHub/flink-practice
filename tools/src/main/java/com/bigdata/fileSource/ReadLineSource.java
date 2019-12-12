@@ -27,7 +27,7 @@ public class ReadLineSource extends RichParallelSourceFunction<String> {
 //            System.out.println("读取：".concat(line));
             sourceContext.collect(line);
             //100 ms
-            Thread.sleep(1000);
+            Thread.sleep(10000);
         }
         sourceContext.close();
     }
