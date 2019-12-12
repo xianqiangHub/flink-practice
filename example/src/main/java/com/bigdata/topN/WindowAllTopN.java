@@ -39,9 +39,19 @@ public class WindowAllTopN {
         source.keyBy(new TupleKeySelectorByStart())
                 .timeWindow(Time.seconds(10))
                 .process(new keyTopFunction(2))
-                .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(1))) //和第一个时间窗口大小一样
+                .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(1)))
                 .process(new windowTopFunction(2))
                 .print();
+
+//        someStream.window(window1).......addSink(sink1)
+//        someStream.window(window2).......addSink(sink2)
+
+//        source.keyBy(new TupleKeySelectorByStart())
+//                .timeWindow(Time.seconds(10))
+//                .process(new keyTopFunction(2))
+//                .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(1)))
+//                .process(new windowTopFunction(2))
+//                .print();
 
 
         env.execute(WindowAllTopN.class.getSimpleName());
