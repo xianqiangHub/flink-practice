@@ -11,6 +11,7 @@ import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.scala.function.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
@@ -31,27 +32,19 @@ public class WindowAllTopN {
 
         SingleOutputStreamOperator<Tuple2<String, Integer>> source = stream.flatMap(new LineSplitter()).keyBy(0).sum(1);
 
-        source.keyBy(new TupleKeySelectorByStart()).timeWindow(Time.minutes(1)).process(new keyTopFunction(1)).print();
+        source.keyBy(new TupleKeySelectorByStart())
+                .window(TumblingProcessingTimeWindows.of(Time.seconds(20)))
+                .process(new MykeyTopFunction())
+                .print();
 
         env.execute(WindowAllTopN.class.getSimpleName());
     }
 
-    public static class keyTopFunction extends ProcessWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow> {
-
-        private int topSize = 10;
-
-        keyTopFunction(int topSize) {
-            this.topSize = topSize;
-        }
-
-        public keyTopFunction() {
-        }
-
+    private static class MykeyTopFunction extends
+            ProcessWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow> {
         @Override
-        public void process(String key, Context context, Iterable<Tuple2<String, Integer>> elements, Collector<Tuple2<String, Integer>> out) throws Exception {
+        public void process(String s, Context context, Iterable<Tuple2<String, Integer>> elements, Collector<Tuple2<String, Integer>> out) throws Exception {
 
-
-//            out.collect();
         }
     }
 
@@ -61,29 +54,9 @@ public class WindowAllTopN {
         @Override
         public String getKey(Tuple2<String, Integer> value) throws Exception {
             // TODO Auto-generated method stub
-            return value.f0;
+            return value.f0.substring(0, 1);
         }
 
-    }
-
-    /**
-     * 针对keyby window的TopN函数，继承自ProcessWindowFunction
-     */
-    private static class TopNFunction
-            extends
-            ProcessWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow> {
-
-        private int topSize = 10;
-
-        public TopNFunction(int topSize) {
-            // TODO Auto-generated constructor stub
-            this.topSize = topSize;
-        }
-
-        @Override
-        public void process(String s, Context context, Iterable<Tuple2<String, Integer>> elements, Collector<Tuple2<String, Integer>> out) throws Exception {
-
-        }
     }
 
     private static class LineSplitter implements FlatMapFunction<String, Tuple2<String, Integer>> {
