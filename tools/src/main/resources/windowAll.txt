@@ -1,1 +1,1 @@
-hadoop,hive,flink,flink,druid,clickhouse,kylin
+ahadoop,ahive,aflink,aflink,aflink,aflink,adruid,aclickhouse,akylin,aflink,ahive,akafka，bhadoop,bhive,bflink,bflink,bdruid,bclickhouse,bkylin,bflink,bhive,bkafka
