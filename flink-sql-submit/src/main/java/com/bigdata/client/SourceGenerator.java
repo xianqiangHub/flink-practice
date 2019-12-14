@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.bigdata;
+package com.bigdata.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;

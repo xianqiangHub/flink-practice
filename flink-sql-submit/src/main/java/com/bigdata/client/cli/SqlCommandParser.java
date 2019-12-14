@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.bigdata.cli;
+package com.bigdata.client.cli;
 
 import java.util.*;
 import java.util.function.Function;

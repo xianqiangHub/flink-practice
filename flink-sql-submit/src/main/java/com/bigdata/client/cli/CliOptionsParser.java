@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.bigdata.cli;
+package com.bigdata.client.cli;
 
 import org.apache.commons.cli.*;
 

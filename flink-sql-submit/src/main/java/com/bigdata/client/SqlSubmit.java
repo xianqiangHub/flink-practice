@@ -15,11 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bigdata;
-import com.bigdata.cli.CliOptions;
-import com.bigdata.cli.CliOptionsParser;
-import com.bigdata.cli.SqlCommandParser;
-import com.bigdata.cli.SqlCommandParser.SqlCommandCall;
+package com.bigdata.client;
+import com.bigdata.client.cli.CliOptions;
+import com.bigdata.client.cli.CliOptionsParser;
+import com.bigdata.client.cli.SqlCommandParser;
+import com.bigdata.client.cli.SqlCommandParser.SqlCommandCall;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.SqlParserException;
 import org.apache.flink.table.api.TableEnvironment;

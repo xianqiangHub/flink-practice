@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.bigdata.cli;
+package com.bigdata.client.cli;
 
 /**
  * Command line options to configure the SQL client. Arguments that have not been specified
