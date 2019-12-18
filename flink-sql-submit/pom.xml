@@ -13,20 +13,35 @@
 
     <dependencies>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-table -->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.flink</groupId>-->
-            <!--<artifactId>flink-table</artifactId>-->
-            <!--<version>${flink.version}</version>-->
-        <!--</dependency>-->
-        <!-- Flink modules -->
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-api-java</artifactId>
+            <artifactId>flink-connector-kafka_2.11</artifactId>
             <version>${flink.version}</version>
             <!--<scope>provided</scope>-->
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-json</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+
+        <!--java-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-api-java-bridge_2.11</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+
+        <!-- Either... (for the old planner that was available before Flink 1.9) -->
+        <!--<dependency>-->
+        <!--<groupId>org.apache.flink</groupId>-->
+        <!--<artifactId>flink-table-planner_2.11</artifactId>-->
+        <!--<version>${flink.version}</version>-->
+        <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
+        <!--</dependency>-->
+        <!-- or.. (for the new Blink planner) -->
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner-blink_2.11</artifactId>
@@ -34,40 +49,22 @@
             <!--<scope>provided</scope>-->
         </dependency>
 
+        <!--在内部，表生态系统的一部分在Scala中实现。因此，请确保为批处理和流应用程序都添加以下依赖项：-->
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-planner_2.11</artifactId>
+            <artifactId>flink-streaming-scala_2.11</artifactId>
             <version>${flink.version}</version>
             <!--<scope>provided</scope>-->
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-jdbc_2.11</artifactId>
-            <version>${flink.version}</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
-
-        <!-- CLI dependencies -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-clients_2.11</artifactId>
-            <version>${flink.version}</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
-        <!--连接Kafka需要的包-->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-connector-kafka-base_2.11</artifactId>
-            <version>${flink.version}</version>
-            <!--<scope>compile</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-json</artifactId>
-            <version>1.9.0</version>
-        </dependency>
+        <!--扩展依赖-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.flink</groupId>-->
+            <!--<artifactId>flink-table-common</artifactId>-->
+            <!--<version>${flink.version}</version>-->
+        <!--</dependency>-->
 
     </dependencies>
+
 
 </project>
