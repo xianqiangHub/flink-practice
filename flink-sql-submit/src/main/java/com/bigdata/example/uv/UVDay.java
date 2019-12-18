@@ -1,6 +1,5 @@
 package com.bigdata.example.uv;
 
-import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.TimeCharacteristic;
@@ -9,8 +8,6 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
-import org.apache.flink.table.api.TableConfig;
-import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
 import org.apache.flink.table.descriptors.Json;
 import org.apache.flink.table.descriptors.Kafka;
@@ -18,29 +15,30 @@ import org.apache.flink.table.descriptors.Rowtime;
 import org.apache.flink.table.descriptors.Schema;
 import org.apache.flink.types.Row;
 
+
 /**
- *
+ * .inRetractMode()   ///???????会报错 kafka不是各可撤回的流
  */
 public class UVDay {
     public static void main(String[] args) throws Exception {
 
         EnvironmentSettings fsSettings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();
-        StreamExecutionEnvironment fsEnv = StreamExecutionEnvironment.getExecutionEnvironment();
-        StreamTableEnvironment fsTableEnv = StreamTableEnvironment.create(fsEnv, fsSettings);
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        StreamTableEnvironment tEnv = StreamTableEnvironment.create(env, fsSettings);
 
 //       TableEnvironment fsTableEnv = TableEnvironment.create(fsSettings);
 
-        fsEnv.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
         //设置表的参数
-        fsTableEnv.getConfig().getConfiguration().setString("", "");
+//        fsTableEnv.getConfig().getConfiguration().setString("", "");
 
-        fsTableEnv.registerFunction("DateUtil", new DateUtil()); //注册自定义函数
-        fsTableEnv.connect(
+        tEnv.registerFunction("DateUtil", new DateUtil()); //注册自定义函数
+        tEnv.connect(
                 new Kafka()
                         .version("universal")
                         //   "0.8", "0.9", "0.10", "0.11", and "universal"
                         .topic("jsontest")
-                        .property("bootstrap.servers", "localhost:9092")
+                        .property("bootstrap.servers", "borker3:9092,borker1:9092,borker2:9092")
                         .property("group.id", "test")
                         .startFromLatest()
         )
@@ -69,9 +67,9 @@ public class UVDay {
                                 .field("number", Types.INT)
 //                                .from()//optional: original field in the input that is referenced/aliased by this field
                 )
-//                .inAppendMode()
-                .inRetractMode() //otherwise: inUpsertMode() or inRetractMode()
-                .registerTableSource("source"); //表名
+                .inAppendMode()
+//                .inRetractMode()   ///???????会报错 kafka不是各可撤回的流
+                .registerTableSource("recordInfo"); //表名
 
         //设置状态的保存时间
 //        TableConfig config = fsTableEnv.getConfig();
@@ -82,7 +80,8 @@ public class UVDay {
 
         // 计算小时级别uv
 //        Table table = fsTableEnv.sqlQuery("select  DateUtil(rowtime,'yyyyMMddHH'),count(distinct fruit) from source group by DateUtil(rowtime,'yyyyMMddHH')");
-        Table table = fsTableEnv.sqlQuery("select * from source");
+        Table table = tEnv.sqlQuery("select * from recordInfo");
+
         /**
          *  有三个问题，第一，优化，因为按天分组 聚合 数据量较大 count(distinct )
          *
@@ -93,7 +92,7 @@ public class UVDay {
 
 //        table.printSchema();
 
-        fsTableEnv.toRetractStream(table, Row.class).addSink(new SinkFunction<Tuple2<Boolean, Row>>() {
+        tEnv.toRetractStream(table, Row.class).addSink(new SinkFunction<Tuple2<Boolean, Row>>() {
             @Override
             public void invoke(Tuple2<Boolean, Row> value, Context context) throws Exception {
                 System.out.println(value.f1.toString());
@@ -105,8 +104,8 @@ public class UVDay {
 //        table.printSchema();
 //        dataStream.print();
 
-        System.out.println(fsEnv.getExecutionPlan());
-        fsEnv.execute("UVDay");
+        System.out.println(env.getExecutionPlan());
+//        fsEnv.execute("UVDay");
     }
 }
 

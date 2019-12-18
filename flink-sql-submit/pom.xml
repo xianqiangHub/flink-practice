@@ -35,12 +35,12 @@
         </dependency>
 
         <!-- Either... (for the old planner that was available before Flink 1.9) -->
-        <!--<dependency>-->
-        <!--<groupId>org.apache.flink</groupId>-->
-        <!--<artifactId>flink-table-planner_2.11</artifactId>-->
-        <!--<version>${flink.version}</version>-->
-        <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-planner_2.11</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
         <!-- or.. (for the new Blink planner) -->
         <dependency>
             <groupId>org.apache.flink</groupId>
