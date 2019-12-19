@@ -3,5 +3,11 @@ stop是优雅的停止，但必须实现stoppableFunction接口，调用stop方�
 cancel是调用cancel()方法，尽快取消任务，没有取消的，开始定期关闭线程，可以保存savepoint，一种在配置中指定savepoint目录，一种每次调用指定
 2、流式数据倾斜
 通过查看各subtask的数据流入流出量，很容易看出数据是否有倾斜
+3、flink sql的自定义aggregate函数，在window中没有调用函数的open方法
+select DateUtil(rowtime,'yyyyMMddHH'),WeightedAvg(number,number) from source group by DateUtil(rowtime,'yyyyMMddHH') //正常
+select fruit,WeightedAvg(number,number),TUMBLE_END(rowtime, INTERVAL '5' SECOND) from source group by fruit,TUMBLE(rowtime, INTERVAL '5' SECOND) //没有调用AggregateFunction的open方法
+如果在自定义aggregate函数中open中连接外部数据或者context获取参数，受影响，解决是在构造器传入
+https://mp.weixin.qq.com/s/GRt_nnahIh7wmQvTMYIMfg
+4、
 
 

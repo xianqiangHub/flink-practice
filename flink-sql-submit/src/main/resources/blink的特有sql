@@ -1,0 +1,16 @@
+Top-N:
+SELECT product_id, category, product_name, sales  // omit row_num field in the output  (优化 * ，减少IO)
+  FROM (
+     SELECT *,
+         ROW_NUMBER() OVER (PARTITION BY category ORDER BY sales DESC) as row_num
+     FROM ShopSales
+     )
+  WHERE row_num <= 5
+-----------------------------------------------------------------------------------------------------------
+重复数据删除：
+SELECT order_id, user, product, number
+  FROM (
+     SELECT *,
+         ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY proctime ASC) as row_num   //proctime 根据时间
+     FROM Orders)
+  WHERE row_num = 1);

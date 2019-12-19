@@ -1,0 +1,126 @@
+具体看官网https://ci.apache.org/projects/flink/flink-docs-release-1.9/dev/table/sql.html#supported-syntax
+一下为流式的：
+创建表：
+CREATE TABLE [catalog_name.][db_name.]table_name
+  [(col_name1 col_type1 [COMMENT col_comment1], ...)]
+  [COMMENT table_comment]
+  [PARTITIONED BY (col_name1, col_name2, ...)]     //按列分区（如果是文件系统，一个分区一个目录）
+  WITH (key1=val1, key2=val2, ...)
+删除表：
+DROP TABLE [IF EXISTS] [catalog_name.][db_name.]table_name
+----------------------------------------------------------------------------------------
+分组窗口聚合：
+SELECT user, SUM(amount)
+FROM Orders
+GROUP BY TUMBLE(rowtime, INTERVAL '1' DAY), user
+TUMBLE_START(time_attr, interval)/TUMBLE_END(time_attr, interval)/TUMBLE_ROWTIME(time_attr, interval)/TUMBLE_PROCTIME(time_attr, interval)
+----------------------------------------------------------------------------------------
+开窗：
+SELECT COUNT(amount) OVER (
+PARTITION BY user
+ORDER BY proctime
+ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) //当前行和前面2行做聚合
+FROM Orders
+----------------------------------------------------------------------------------------
+Having：
+SELECT SUM(amount)
+FROM Orders
+GROUP BY users
+HAVING SUM(amount) > 50
+----------------------------------------------------------------------------------------
+join:
+SELECT *
+FROM Orders INNER JOIN Product ON Orders.productId = Product.id
+SELECT *
+FROM Orders LEFT JOIN Product ON Orders.productId = Product.id
+SELECT *
+FROM Orders RIGHT JOIN Product ON Orders.productId = Product.id
+SELECT *
+FROM Orders FULL OUTER JOIN Product ON Orders.productId = Product.id
+//对于流查询，计算查询结果所需的状态可能会无限增长
+----------------------------------------------------------------------------------------
+Time-windowed Join: (interval join)
+SELECT *
+FROM Orders o, Shipments s
+WHERE o.id = s.orderId AND
+o.ordertime BETWEEN s.shiptime - INTERVAL '4' HOUR AND s.shiptime;
+//ltime = rtime
+//ltime >= rtime AND ltime < rtime + INTERVAL '10' MINUTE
+//ltime BETWEEN rtime - INTERVAL '10' SECOND AND rtime + INTERVAL '5' SECOND
+//比如：订单是在收到订单后4小时发出的，那么上面的示例将把所有订单与其相应的发货连接起来
+----------------------------------------------------------------------------------------
+Expanding arrays into a relation:
+SELECT users, tag
+FROM Orders CROSS JOIN UNNEST(tags) AS t (tag)
+----------------------------------------------------------------------------------------
+Join with Table Function：
+SELECT users, tag
+FROM Orders, LATERAL TABLE(unnest_udtf(tags)) t AS tag
+
+SELECT users, tag
+FROM Orders LEFT JOIN LATERAL TABLE(unnest_udtf(tags)) t AS tag ON TRUE
+----------------------------------------------------------------------------------------
+Join with Temporal Table：
+SELECT
+o_amount, r_rate
+FROM
+Orders,
+LATERAL TABLE (Rates(o_proctime))
+WHERE
+r_currency = o_currency
+----------------------------------------------------------------------------------------
+UnionAll:
+SELECT *
+FROM (
+(SELECT user FROM Orders WHERE a % 2 = 0)
+UNION ALL
+(SELECT user FROM Orders WHERE b = 0)
+)
+----------------------------------------------------------------------------------------
+in:
+SELECT user, amount
+FROM Orders
+WHERE product IN (
+SELECT product FROM NewProducts
+)
+----------------------------------------------------------------------------------------
+Exists:
+SELECT user, amount
+FROM Orders
+WHERE product EXISTS (
+SELECT product FROM NewProducts
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

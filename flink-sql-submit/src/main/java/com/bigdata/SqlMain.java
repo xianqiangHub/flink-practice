@@ -115,11 +115,59 @@ public class SqlMain {
 
 
         tEnv.sqlUpdate("insert into sink select fruit,sum(number),TUMBLE_END(rowtime, INTERVAL '5' SECOND) from view group by fruit,TUMBLE(rowtime, INTERVAL '5' SECOND)");
-//        tEnv.sqlUpdate("insert into sink1 select fruit,sum(number),TUMBLE_END(rowtime, INTERVAL '5' SECOND) from view group by fruit,TUMBLE(rowtime, INTERVAL '5' SECOND)");
+        tEnv.sqlUpdate("insert into sink1 select fruit,sum(number),TUMBLE_END(rowtime, INTERVAL '5' SECOND) from view group by fruit,TUMBLE(rowtime, INTERVAL '5' SECOND)");
 
         System.out.println(fsEnv.getExecutionPlan());
 //        env.execute();
     }
-
-
 }
+
+//
+//    val create_sql =
+//            """
+//        | CREATE TABLE user_visit (
+//        |    user_name VARCHAR,
+//        |    ts timestamp
+//        |) WITH (
+//        |    'connector.type' = 'kafka',
+//        |    'connector.version' = '0.10',
+//        |    'connector.topic' = 'flink-test-05',
+//        |    'connector.startup-mode' = 'latest-offset',
+//        |    'connector.properties.0.key' = 'zookeeper.connect',
+//        |    'connector.properties.0.value' = '192.168.17.24,192.168.17.25,192.168.17.26',
+//        |    'connector.properties.1.key' = 'bootstrap.servers',
+//        |    'connector.properties.1.value' = '192.168.17.26:9092,192.168.17.27:9092,192.168.17.28:9092',
+//        |    'update-mode' = 'append',
+//        |    'format.type' = 'json',
+//        |    'format.derive-schema' = 'true'
+//        |)
+//        |""".stripMargin
+//        println(create_sql)
+//        val sink_sql =
+//        """
+//        |CREATE TABLE pvuv_sink (
+//        |    dt VARCHAR,
+//        |    pv BIGINT,
+//        |    uv BIGINT
+//        |) WITH (
+//        |    'connector.type' = 'jdbc',
+//        |    'connector.url' = 'jdbc:mysql://192.168.17.24:3306/flink_test',
+//        |    'connector.table' = 'pvuv_sink',
+//        |    'connector.username' = 'root',
+//        |    'connector.password' = '123456',
+//        |    'connector.write.flush.max-rows' = '1'
+//        |)
+//        |""".stripMargin
+//        tEnv.sqlUpdate(create_sql)
+//        tEnv.sqlUpdate(sink_sql)
+//        tEnv.sqlUpdate(
+//        """
+//        |INSERT INTO pvuv_sink
+//        |SELECT
+//        | time_convert(ts) dt,
+//        |  COUNT(*) AS pv,
+//        |  COUNT(DISTINCT user_name) AS uv
+//        |FROM user_visit
+//        |GROUP BY time_convert(ts)
+//        |
+//        |""".stripMargin)
