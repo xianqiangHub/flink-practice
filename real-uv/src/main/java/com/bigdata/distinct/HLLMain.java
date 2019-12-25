@@ -1,10 +1,6 @@
-package com.bigdata.quchong;
+package com.bigdata.distinct;
 
-import net.agkn.hll.HLL;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.flink.api.common.state.ValueState;
-import org.apache.flink.api.common.state.ValueStateDescriptor;
-import org.apache.flink.api.common.typeinfo.Types;
 
 /**
  * 在流式去重中，需要保存大量的历史数据，这种方法是尽量减少内存的使用

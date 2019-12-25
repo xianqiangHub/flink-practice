@@ -1,4 +1,4 @@
-package com.bigdata.quchong;
+package com.bigdata.distinct;
 
 /**
  * 有distinct，重启或其他所有数据完全重复的数据
