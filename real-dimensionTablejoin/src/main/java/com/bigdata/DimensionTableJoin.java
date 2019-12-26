@@ -9,6 +9,9 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 
 import java.util.Properties;
 
+/**
+ * 实时数仓需要事实表关联维度表，维度表一般在外部存储
+ */
 public class DimensionTableJoin {
 
     public static void main(String[] args) throws Exception {
@@ -21,7 +24,7 @@ public class DimensionTableJoin {
         DataStreamSource<String> source = bsEnv.addSource(fc);
         //source注册成表
         //维表的流，注册成表
-        RedisLookupableTableSource tableSource  = RedisLookupableTableSource.Builder.newBuilder().withFieldNames(new String[]{"id", "name"})
+        RedisLookupableTableSource tableSource = RedisLookupableTableSource.Builder.newBuilder().withFieldNames(new String[]{"id", "name"})
                 .withFieldTypes(new TypeInformation[]{Types.STRING, Types.STRING})
                 .build();
 
