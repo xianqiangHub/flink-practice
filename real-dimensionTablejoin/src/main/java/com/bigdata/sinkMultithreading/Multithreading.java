@@ -53,7 +53,7 @@ public class Multithreading {
         }
     }
 
-    public class MultiThreadConsumerClient implements Runnable {
+    public static class MultiThreadConsumerClient implements Runnable {
 
         private LinkedBlockingQueue<String> bufferQueue;
 
