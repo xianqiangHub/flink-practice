@@ -8,6 +8,6 @@ select DateUtil(rowtime,'yyyyMMddHH'),WeightedAvg(number,number) from source gro
 select fruit,WeightedAvg(number,number),TUMBLE_END(rowtime, INTERVAL '5' SECOND) from source group by fruit,TUMBLE(rowtime, INTERVAL '5' SECOND) //没有调用AggregateFunction的open方法
 如果在自定义aggregate函数中open中连接外部数据或者context获取参数，受影响，解决是在构造器传入
 https://mp.weixin.qq.com/s/GRt_nnahIh7wmQvTMYIMfg
-4、
+4、流式计算需要满足的几点：状态机制，精确一次语义，吞吐量大，容错机制，弹性扩展
 
 
