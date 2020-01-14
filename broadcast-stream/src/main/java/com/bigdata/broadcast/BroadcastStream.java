@@ -1,4 +1,4 @@
-package com.bigdata;
+package com.bigdata.broadcast;
 
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.datastream.ConnectedStreams;

@@ -1,4 +1,4 @@
-package com.bigdata;
+package com.bigdata.broadcast;
 
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
