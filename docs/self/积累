@@ -9,5 +9,9 @@ select fruit,WeightedAvg(number,number),TUMBLE_END(rowtime, INTERVAL '5' SECOND)
 如果在自定义aggregate函数中open中连接外部数据或者context获取参数，受影响，解决是在构造器传入
 https://mp.weixin.qq.com/s/GRt_nnahIh7wmQvTMYIMfg
 4、流式计算需要满足的几点：状态机制，精确一次语义，吞吐量大，容错机制，弹性扩展
+5、调优（参考）：https://www.cnblogs.com/029zz010buct/p/9774295.html
+6、内存管理：
+   开启堆外内存taskmanager.memory.off-heap=true；不降大量对象放在堆上，放到堆外预留的内存；内存空间不够了，序列话到磁盘
+   flink自己的序列化方式，typeInformation为所有类型的基类
 
 
