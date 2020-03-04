@@ -1,7 +1,10 @@
 package com.bigdata;
 
 /**
- * /**
+ * Flink支持了两种Join：Interval Join（时间间隔连接）和Window Join（窗口连接）
+ * https://mp.weixin.qq.com/s/kLnVtWdx_pXw2RYuBrM2XA
+ */
+  /**
  * 流的关联有
  * JoinedStream & CoGroupedStreams
  * JoinedStreams在底层又调用了CoGroupedStream来实现Join功能。

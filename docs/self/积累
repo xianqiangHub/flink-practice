@@ -15,5 +15,7 @@ https://mp.weixin.qq.com/s/GRt_nnahIh7wmQvTMYIMfg
    flink自己的序列化方式，typeInformation为所有类型的基类
 7、Asynchronous Barrier Snapshotting(ABS)
   异步屏障快照是轻量级快照，核心思想是通过barrier来标记出发快照的时间点和对应数据，将快照时间和数据流解耦异步操作，对管道数据没有依赖
-
+8.checkpoints优化的几个参数
+    1、建议设置的 Checkpoint 的间隔时间最好大于 Checkpoint 的时间，2、Checkpoint保存数默认是1，也就是只保存最新的 Checkpoint 的状态文件，设为2， 3状态很大时可以开启本地恢复state.backend.local-recovery 值为 true
+9、
 
