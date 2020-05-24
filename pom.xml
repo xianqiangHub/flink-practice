@@ -26,6 +26,7 @@
         <module>real-uv</module>
         <module>CEP</module>
         <module>tools</module>
+        <module>connector</module>
     </modules>
 
     <properties>
