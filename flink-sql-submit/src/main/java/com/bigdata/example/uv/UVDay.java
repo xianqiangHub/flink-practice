@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
-import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.descriptors.Json;
 import org.apache.flink.table.descriptors.Kafka;
 import org.apache.flink.table.descriptors.Rowtime;
@@ -33,43 +33,7 @@ public class UVDay {
 //        fsTableEnv.getConfig().getConfiguration().setString("", "");
 
         tEnv.registerFunction("DateUtil", new DateUtil()); //注册自定义函数
-        tEnv.connect(
-                new Kafka()
-                        .version("universal")
-                        //   "0.8", "0.9", "0.10", "0.11", and "universal"
-                        .topic("jsontest")
-                        .property("bootstrap.servers", "borker3:9092,borker1:9092,borker2:9092")
-                        .property("group.id", "test")
-                        .startFromLatest()
-        )
-                .withFormat(
-                        new Json()
-                                .failOnMissingField(false)
-                                .deriveSchema() //从我们指定的schema里逆推
-                )
-                .withSchema(
-
-                        new Schema()
-//                                .proctime()      // optional: declares this field as a processing-time attribute
-// Converts an existing LONG or SQL_TIMESTAMP field in the input into the rowtime attribute..rowtime(  new Rowtime()    .timestampsFromField("ts_field")    // required: original field name in the input)
-// Converts the assigned timestamps from a DataStream API record into the rowtime attribute// and thus preserves the assigned timestamps from the source.// This requires a source that assigns timestamps (e.g., Kafka 0.10+)..rowtime(  new Rowtime()    .timestampsFromSource())
-// Sets a custom timestamp extractor to be used for the rowtime attribute.// The extractor must extend `org.apache.flink.table.sources.tsextractors.TimestampExtractor`..rowtime(  new Rowtime()    .timestampsFromExtractor(...))
-
-                                // Sets a watermark strategy for ascending rowtime attributes. Emits a watermark of the maximum// observed timestamp so far minus 1. Rows that have a timestamp equal to the max timestamp// are not late..rowtime(  new Rowtime()    .watermarksPeriodicAscending())
-// Sets a built-in watermark strategy for rowtime attributes which are out-of-order by a bounded time interval.// Emits watermarks which are the maximum observed timestamp minus the specified delay..rowtime(  new Rowtime()    .watermarksPeriodicBounded(2000)    // delay in milliseconds)
-// Sets a built-in watermark strategy which indicates the watermarks should be preserved from the// underlying DataStream API and thus preserves the assigned watermarks from the source..rowtime(  new Rowtime()    .watermarksFromSource())
-                                .field("rowtime", Types.SQL_TIMESTAMP)
-                                .rowtime(new Rowtime()
-                                        .timestampsFromField("eventtime") //
-                                        .watermarksPeriodicBounded(2000)  //
-                                )  //optional: declares this field as a event-time attribute
-                                .field("fruit", Types.STRING)
-                                .field("number", Types.INT)
-//                                .from()//optional: original field in the input that is referenced/aliased by this field
-                )
-                .inAppendMode()
-//                .inRetractMode()   ///???????会报错 kafka不是各可撤回的流
-                .registerTableSource("recordInfo"); //表名
+//        tEnv.registerTableSource(); //表名
 
         //设置状态的保存时间
 //        TableConfig config = fsTableEnv.getConfig();

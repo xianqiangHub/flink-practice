@@ -9,7 +9,7 @@ import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.descriptors.Json;
 import org.apache.flink.table.descriptors.Kafka;
 import org.apache.flink.table.descriptors.Rowtime;
@@ -39,7 +39,7 @@ public class TestUVDay {
                 .withFormat(new Json().deriveSchema())
                 .withSchema(new Schema().field("record", Types.STRING))
                 .inAppendMode()
-                .registerTableSource("recordInfo");
+                .createTemporaryTable("source");
 
 
         Table sqlQuery = tEnv.sqlQuery("select * from recordInfo");

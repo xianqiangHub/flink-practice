@@ -22,17 +22,18 @@
         <module>log-ELK</module>
         <module>state-time-window</module>
         <module>example</module>
-        <module>real-stream-join</module>
         <module>real-uv</module>
         <module>CEP</module>
         <module>tools</module>
         <module>connector</module>
         <module>IOT</module>
+        <module>real-stream-join</module>
+        <module>dianshang</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <flink.version>1.9.1</flink.version>
+        <flink.version>1.11.2</flink.version>
         <java.version>1.8</java.version>
         <scala.binary.version>2.11</scala.binary.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -89,6 +90,18 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-clients_2.11</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-cep_2.11</artifactId>
+                <version>${flink.version}</version>
             </dependency>
 
         </dependencies>

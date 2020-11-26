@@ -6,7 +6,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.descriptors.Json;
 import org.apache.flink.table.descriptors.Kafka;
 import org.apache.flink.table.descriptors.Rowtime;
@@ -61,8 +61,8 @@ public class SqlMain {
                                 .field("fruit", Types.STRING)
                                 .field("number", Types.INT)
                 )
-                .inAppendMode()
-                .registerTableSource("source");
+                .inAppendMode().createTemporaryTable("source");
+
 
         tEnv.connect(
                 new Kafka()
@@ -85,7 +85,7 @@ public class SqlMain {
                                 .field("total", Types.INT)
                                 .field("time", Types.SQL_TIMESTAMP)
                 )
-                .registerTableSink("sink");
+                .createTemporaryTable("source");
 
         tEnv.connect(
                 new Kafka()
@@ -108,7 +108,7 @@ public class SqlMain {
                                 .field("total", Types.INT)
                                 .field("time", Types.SQL_TIMESTAMP)
                 )
-                .registerTableSink("sink1");
+                .createTemporaryTable("source");
 
         Table table = tEnv.sqlQuery("select * from source");
         tEnv.registerTable("view", table);

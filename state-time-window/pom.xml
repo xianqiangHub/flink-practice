@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>time-window</artifactId>
+    <artifactId>state-time-window</artifactId>
 
     <dependencies>
         <dependency>

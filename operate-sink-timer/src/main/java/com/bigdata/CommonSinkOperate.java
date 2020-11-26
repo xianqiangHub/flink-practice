@@ -70,7 +70,7 @@ public abstract class CommonSinkOperate<T extends Serializable, Object> extends 
     public void initializeState(StateInitializationContext context) throws Exception {
         super.initializeState(context);
         this.list = new ArrayList<>();
-        listState = context.getOperatorStateStore().getSerializableListState("batch-interval-sink");
+//        listState = context.getOperatorStateStore().getSerializableListState("batch-interval-sink");
 
         if (context.isRestored()) {
             for (T x : listState.get()) {
